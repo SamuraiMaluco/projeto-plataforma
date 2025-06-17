@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Adicionar Novo Conteúdo</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <!-- Campos básicos -->
+        <div class="form-group">
+            <label>Título</label>
+            <input type="text" name="titulo" class="form-control" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Matéria</label>
+            <select name="materia_id" class="form-control" required>
+                {% for materia in materias %}
+                <option value="{{ materia.id }}">{{ materia.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Tipo de Conteúdo</label>
+            <select name="tipo" id="tipoConteudo" class="form-control" required>
+                <option value="video">Vídeo</option>
+                <option value="audio">Áudio</option>
+                <option value="imagem">Imagem</option>
+                <option value="texto">Texto</option>
+            </select>
+        </div>
+        
+        <!-- Seção dinâmica por tipo -->
+        <div id="videoFields" class="tipo-fields">
+            <div class="form-group">
+                <label>Upload Vídeo</label>
+                <input type="file" id="videoUpload" class="form-control">
+                <button type="button" id="btnUploadVideo" class="btn btn-secondary">Enviar</button>
+                <input type="hidden" name="video_url" id="videoUrl">
+            </div>
+            
+            <div class="form-group">
+                <label>Thumbnail (opcional)</label>
+                <input type="file" id="thumbnailUpload" class="form-control">
+                <input type="hidden" name="thumbnail_url" id="thumbnailUrl">
+            </div>
+            
+            <div class="form-group">
+                <label>Duração (segundos)</label>
+                <input type="number" name="duracao" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label>Transcrição (para acessibilidade)</label>
+                <textarea name="transcricao" class="form-control" rows="4"></textarea>
+            </div>
+        </div>
+        
+        <div id="audioFields" class="tipo-fields" style="display:none;">
+            <!-- Campos similares para áudio -->
+        </div>
+        
+        <div id="imagemFields" class="tipo-fields" style="display:none;">
+            <!-- Campos para imagem -->
+        </div>
+        
+        <div class="form-group">
+            <label>Ordem de Exibição</label>
+            <input type="number" name="ordem" class="form-control" required>
+        </div>
+        
+        <div class="form-check">
+            <input type="checkbox" name="pago" id="pago" class="form-check-input">
+            <label for="pago" class="form-check-label">Conteúdo Premium</label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Salvar Conteúdo</button>
+    </form>
+</div>
+
+<script>
+// Controle dos campos dinâmicos
+document.getElementById('tipoConteudo').addEventListener('change', function() {
+    document.querySelectorAll('.tipo-fields').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    document.getElementById(this.value + 'Fields').style.display = 'block';
+});
+
+// Upload de arquivos
+document.getElementById('btnUploadVideo').addEventListener('click', function() {
+    const fileInput = document.getElementById('videoUpload');
+    if (fileInput.files.length === 0) return;
+    
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('filetype', 'video');
+    
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.url) {
+            document.getElementById('videoUrl').value = data.url;
+            alert('Vídeo enviado com sucesso!');
+        } else {
+            alert('Erro no upload: ' + (data.error || 'Desconhecido'));
+        }
+    });
+});
+</script>
+{% endblock %}

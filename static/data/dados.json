@@ -1,0 +1,95 @@
+{
+    "materias": [
+      {
+        "id": "introducao-direito",
+        "nome": "Introdução ao Direito",
+        "capitulos": [
+          "Capítulo 1: Conceitos Iniciais",
+          "Capítulo 2: Fontes do Direito",
+          "Capítulo 3: Ramos do Direito"
+        ]
+      },
+      {
+        "id": "portugues-juridico",
+        "nome": "Português Jurídico",
+        "capitulos": [
+          "Capítulo 1: Linguagem Jurídica",
+          "Capítulo 2: Redação Oficial",
+          "Capítulo 3: Pontuação e Clareza"
+        ]
+      },
+      {
+        "id": "sociologia",
+        "nome": "Sociologia",
+        "capitulos": [
+          "Capítulo 1: Fundamentos",
+          "Capítulo 2: Estrutura Social",
+          "Capítulo 3: Cultura e Sociedade"
+        ]
+      },
+      {
+        "id": "direito-civil",
+        "nome": "Direito Civil",
+        "capitulos": [
+          "Capítulo 1: Pessoas",
+          "Capítulo 2: Bens",
+          "Capítulo 3: Obrigações"
+        ]
+      },
+      {
+        "id": "direito-constitucional",
+        "nome": "Direito Constitucional",
+        "capitulos": [
+          "Capítulo 1: Constituição",
+          "Capítulo 2: Poderes da União",
+          "Capítulo 3: Direitos Fundamentais"
+        ]
+      },
+      {
+        "id": "direito-internacional",
+        "nome": "Direito Internacional Público",
+        "capitulos": [
+          "Capítulo 1: Tratados Internacionais",
+          "Capítulo 2: Organizações Internacionais",
+          "Capítulo 3: Soberania"
+        ]
+      },
+      {
+        "id": "etica-juridica",
+        "nome": "Ética do Profissional Jurídico",
+        "capitulos": [
+          "Capítulo 1: Código de Ética",
+          "Capítulo 2: Responsabilidade Profissional",
+          "Capítulo 3: Sigilo e Conduta"
+        ]
+      },
+      {
+        "id": "teoria-geral-direito",
+        "nome": "Teoria Geral do Direito",
+        "capitulos": [
+          "Capítulo 1: Norma Jurídica",
+          "Capítulo 2: Interpretação",
+          "Capítulo 3: Aplicação do Direito"
+        ]
+      },
+      {
+        "id": "direito-romano",
+        "nome": "Direito Romano",
+        "capitulos": [
+          "Capítulo 1: História e Fontes",
+          "Capítulo 2: Pessoas e Família",
+          "Capítulo 3: Propriedade e Obrigações"
+        ]
+      },
+      {
+        "id": "ciencia-politica",
+        "nome": "Ciência Política",
+        "capitulos": [
+          "Capítulo 1: Estado e Governo",
+          "Capítulo 2: Democracia",
+          "Capítulo 3: Partidos Políticos"
+        ]
+      }
+    ]
+  }
+  

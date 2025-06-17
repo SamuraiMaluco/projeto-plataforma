@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('listar_materias') }}">Matérias</a></li>
+            <li class="breadcrumb-item active">{{ materia.nome }}</li>
+        </ol>
+    </nav>
+
+    <h2>{{ materia.nome }} <small class="text-muted">{{ materia.ramo }}</small></h2>
+    
+    <div class="list-group">
+        {% for conteudo in conteudos %}
+        <a href="{{ url_for('ver_conteudo', conteudo_id=conteudo.id) }}" 
+           class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">
+                    <i class="fas fa-{{ 'play-circle' if conteudo.tipo == 'video' else 'headphones' if conteudo.tipo == 'audio' else 'file-alt' }}"></i>
+                    {{ conteudo.titulo }}
+                </h5>
+                <small>{{ conteudo.duracao }} min</small>
+            </div>
+            <p class="mb-1">Conteúdo {{ conteudo.tipo|capitalize }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

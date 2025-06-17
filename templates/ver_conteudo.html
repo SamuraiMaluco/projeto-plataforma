@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/watch.css') }}">
+{% block content %}
+<div class="media-container">
+    {% if conteudo.tipo == 'video' %}
+    <div class="video-player">
+        <video controls poster="{{ conteudo.url_thumbnail or url_for('static', filename='img/video-thumbnail.jpg') }}">
+            <source src="{{ conteudo.url }}" type="video/{{ conteudo.tipo_media }}">
+            Seu navegador não suporta vídeos HTML5.
+        </video>
+        {% if conteudo.transcricao %}
+        <div class="transcricao">
+            <h3>Transcrição</h3>
+            <p>{{ conteudo.transcricao }}</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% elif conteudo.tipo == 'audio' %}
+    <div class="audio-player">
+        <audio controls>
+            <source src="{{ conteudo.url }}" type="audio/{{ conteudo.tipo_media }}">
+            Seu navegador não suporta áudio HTML5.
+        </audio>
+        {% if conteudo.transcricao %}
+        <div class="transcricao">
+            <h3>Transcrição</h3>
+            <p>{{ conteudo.transcricao }}</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% elif conteudo.tipo == 'imagem' %}
+    <div class="image-viewer">
+        <img src="{{ conteudo.url }}" alt="{{ conteudo.titulo }}" class="img-responsive">
+        {% if conteudo.conteudo %}
+        <div class="image-caption">
+            {{ conteudo.conteudo|safe }}
+        </div>
+        {% endif %}
+    </div>
+    
+    {% else %}
+    <div class="text-content">
+        {{ conteudo.conteudo|safe }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+<!--JAVASCRIPT-->
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Controle de vídeo
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+        // Salvar progresso no localStorage
+        video.addEventListener('timeupdate', function() {
+            localStorage.setItem(`videoProgress_${window.location.pathname}`, video.currentTime);
+        });
+        
+        // Restaurar progresso
+        const savedTime = localStorage.getItem(`videoProgress_${window.location.pathname}`);
+        if (savedTime) {
+            video.currentTime = parseFloat(savedTime);
+        }
+    });
+    
+    // Controle de áudio
+    const audios = document.querySelectorAll('audio');
+    audios.forEach(audio => {
+        audio.addEventListener('play', function() {
+            audios.forEach(a => {
+                if (a !== audio) a.pause();
+            });
+        });
+    });
+    
+    // Lightbox para imagens
+    document.querySelectorAll('.image-viewer img').forEach(img => {
+        img.addEventListener('click', function() {
+            const lightbox = document.createElement('div');
+            lightbox.className = 'lightbox';
+            lightbox.innerHTML = `
+                <div class="lightbox-content">
+                    <span class="close">&times;</span>
+                    <img src="${img.src}" alt="${img.alt}">
+                </div>
+            `;
+            document.body.appendChild(lightbox);
+            
+            lightbox.querySelector('.close').addEventListener('click', function() {
+                lightbox.remove();
+            });
+        });
+    });
+});

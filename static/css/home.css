@@ -1,0 +1,174 @@
+:root {
+  --primary: #3a4f76;
+  --secondary: #4cc9f0;
+  --light-bg: #f8f9fa;
+  --text-dark: #2c3e50;
+  --text-light: #ffffff;
+}
+
+/* Container Principal */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Box de Conteúdo */
+.content-box {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 2rem;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.welcome-section h1 {
+  color: var(--text-dark);
+  font-size: 2.2rem;
+}
+
+.welcome-section h1 span {
+  color: var(--primary);
+}
+
+.welcome-section .subtext {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Grid de Recursos */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.feature-card {
+  background: var(--light-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+}
+
+.feature-card h3 {
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 0.8rem;
+}
+
+.feature-card p {
+  color: #666;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-button {
+  display: block;
+  width: max-content;
+  margin: 0 auto;
+  padding: 0.6rem 1.5rem;
+  background: var(--primary);
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.card-button:hover {
+  background: #2c3e50;
+}
+
+/* Elemento "Em Breve" discreto */
+.coming-soon-tag {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Barra Lateral Funcional */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: var(--primary);
+  color: white;
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar.collapsed {
+  transform: translateX(-90%);
+}
+
+.toggle-sidebar {
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 60px;
+  background: var(--primary);
+  border-radius: 0 5px 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 1rem;
+  }
+  
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.active {
+    transform: translateX(0);
+  }
+}
+/* Garante fallback visual se JS falhar */
+.carousel-item {
+  display: none;
+}
+
+.carousel-item:first-child {
+  display: block;
+}
+
+.no-js .carousel-item {
+  display: block;
+}

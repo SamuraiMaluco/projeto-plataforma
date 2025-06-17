@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Plataforma de Estudos{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+  <!-- Box Principal -->
+  <div class="content-box">
+    <div class="welcome-section">
+      <h1>Bem-vindo, <span>{{ username }}</span>!</h1>
+      <p class="subtext">{{ mensagem }}</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Card Simulados -->
+      <div class="feature-card">
+        <div class="card-icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <h3>Simulados</h3>
+        <p>Teste seus conhecimentos com questões atualizadas</p>
+        <a href="{{ url_for('simulados') }}" class="card-button">Acessar</a>
+      </div>
+
+      <!-- Card Aulas -->
+      <div class="feature-card">
+        <div class="card-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h3>Aulas</h3>
+        <p>Conteúdo didático organizado por matéria</p>
+        <a href="{{ url_for('aulas') }}" class="card-button">Acessar</a>
+      </div>
+
+      <!-- Card Progresso -->
+      <div class="feature-card">
+        <div class="card-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3>Seu Progresso</h3>
+        <p>Acompanhe seu desenvolvimento</p>
+        <a href="{{ url_for('progresso') }}" class="card-button">Ver</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elemento "Em Breve" discreto -->
+  <div class="coming-soon-tag">
+    <span>Novidades em breve</span>
+  </div>
+</div>
+
+
+
+
+
+  <!--Javascript do home-->
+
+
+
+
+
+
+  {% endblock %}
+
+  {% block inline_scripts %}
+
+
+<script>
+  // Verifica se é a página home
+  if (document.body.classList.contains('home-page')) {
+      // Carrossel
+      const initCarousel = () => {
+          const carousel = document.querySelector('.carousel');
+          if (!carousel) return;
+
+          let currentIndex = 0;
+          const items = carousel.querySelectorAll('.carousel-item');
+          const totalItems = items.length;
+
+          function showItem(index) {
+              items.forEach((item, i) => {
+                  item.style.display = i === index ? 'block' : 'none';
+              });
+          }
+
+          function nextItem() {
+              currentIndex = (currentIndex + 1) % totalItems;
+              showItem(currentIndex);
+          }
+
+          // Controles
+          const prevBtn = carousel.querySelector('.carousel-prev');
+          const nextBtn = carousel.querySelector('.carousel-next');
+
+          if (prevBtn) prevBtn.addEventListener('click', () => {
+              currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+              showItem(currentIndex);
+          });
+
+          if (nextBtn) nextBtn.addEventListener('click', nextItem);
+
+          // Auto-rotación
+          let interval = setInterval(nextItem, 5000);
+
+          // Pausa ao interagir
+          carousel.addEventListener('mouseenter', () => clearInterval(interval));
+          carousel.addEventListener('mouseleave', () => {
+              interval = setInterval(nextItem, 5000);
+          });
+
+          showItem(0);
+      };
+
+      // Inicializa quando o DOM estiver pronto
+      domReady(function() {
+          initCarousel();
+          console.log('Home page inicializada');
+      });
+  }
+</script>
+{% endblock %}

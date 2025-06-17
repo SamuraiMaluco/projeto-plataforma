@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/cadastro.css">
+</head>
+<header> <h1>Bem-vindo! Preencha os campos abaixo para iniciar nossa jornada juntos!</h1></header>
+<body>
+    <div class="novo">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+        <form action="/register" method="post">
+            <label for="nome">Nome</label>
+            <input type="text" name="username" id="username" placeholder="nome">
+            <label for="email">Email</label>
+            <input type="email" name="email" placeholder="email">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" placeholder="senha">
+            <button class="meu-botao" type="submit" value="cadastrar">cadastrar</button>
+        
+        </form>
+    </div>    
+    <script>
+        document.getElementById('Voltar ao login').addEventListener(click, function() {
+            window.location.href = "{{url_for('login')}}";
+        });
+    </script>
+</body>
+</html>

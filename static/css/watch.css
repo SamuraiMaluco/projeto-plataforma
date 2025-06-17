@@ -1,0 +1,71 @@
+/* Media Container */
+.media-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Video Player */
+.video-player {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    background: #000;
+}
+
+.video-player video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Audio Player */
+.audio-player {
+    padding: 2rem;
+    background: #f5f7fa;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.audio-player audio {
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Image Viewer */
+.image-viewer {
+    text-align: center;
+    padding: 20px;
+}
+
+.image-viewer img {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.image-caption {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* Transcrição */
+.transcricao {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+    margin-top: 1rem;
+}
+
+.transcricao h3 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}

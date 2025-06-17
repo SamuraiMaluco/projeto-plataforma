@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyDB - {% block title %}Plataforma de Estudos{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+    <!--adminsitrador-->
+    <header>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+    <li>
+        <a href="{{ url_for('admin_materias') }}">
+            <i class="fas fa-cogs"></i>
+            <span>Administração</span>
+        </a>
+    </li>
+{% endif %}
+
+    </header>
+    <!--fim do administrador-->
+    
+    <!-- Sidebar Profissional -->
+    <aside class="sidebar">
+        <button class="toggle-sidebar" aria-label="Alternar menu">
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+        </button>
+        <button class="toggle-sidebar">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="sidebar-header">
+           
+            <h3>StudyDB</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a href="{{ url_for('home') }}">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="{{ url_for('aulas') }}">
+                        <i class="fas fa-book-open"></i>
+                        <span>Aulas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('progresso') }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progresso</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('pagamento') }}">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Assinatura</span>
+                    </a>
+                </li>
+
+                <!--ESSE É UM RECURSO DO ADMINSITRADOR!-->
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                <li>
+                    <a href="{{ url_for('admin_materias') }}">
+                        <i class="fas fa-cogs"></i>
+                        <span>Gerenciar Matérias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin_usuarios') }}">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Gerenciar Usuários</span>
+                    </a>
+                </li>
+                {% endif %}
+                <!-- FIM BLOCO ADMIN -->
+
+                <!--FIM DO BLOCO-->
+                <li class="logout">
+                    <a href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="toggle-sidebar">
+                <i class="fas fa-bars"></i>
+            </div>
+          
+        </header>
+        
+        {% block content %}{% endblock %}
+    </main>
+
+
+
+            <!--Javascript-->
+
+
+
+
+    <script>
+        // Função para garantir que o DOM está pronto
+        function domReady(fn) {
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(fn, 1);
+            } else {
+                document.addEventListener('DOMContentLoaded', fn);
+            }
+        }
+
+        // Carregador de scripts externos quando necessário
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = callback;
+            document.head.appendChild(script);
+        }
+
+        // Inicialização global
+        domReady(function() {
+            console.log('DOM completamente carregado');
+            
+            // Seu código de inicialização comum aqui
+            initSidebar();
+        });
+
+        function initSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            if (!sidebar) return;
+            
+            const toggleSidebar = () => {
+                sidebar.classList.toggle('collapsed');
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            };
+
+            document.querySelectorAll('.toggle-sidebar').forEach(btn => {
+                btn.addEventListener('click', toggleSidebar);
+            });
+
+            // Restaura estado
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                sidebar.classList.add('collapsed');
+            }
+        }
+    </script>
+    
+    {% block inline_scripts %}{% endblock %}
+</body>
+</html>

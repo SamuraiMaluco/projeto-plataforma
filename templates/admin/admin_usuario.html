@@ -1,0 +1,32 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<h2>Matérias</h2>
+<a href="{{ url_for('nova_materia') }}" class="btn btn-primary">Nova Matéria</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ordem</th>
+            <th>Nome</th>
+            <th>Conteúdos</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for materia in materias %}
+        <tr>
+            <td>{{ materia.ordem_exibicao }}</td>
+            <td>
+                <i class="fas fa-{{ materia.icone }}"></i>
+                {{ materia.nome }}
+            </td>
+            <td>{{ materia.conteudos.count() }}</td>
+            <td>
+                <a href="{{ url_for('editar_materia', id=materia.id) }}" class="btn btn-sm btn-secondary">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

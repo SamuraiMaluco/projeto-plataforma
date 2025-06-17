@@ -1,0 +1,190 @@
+.payment-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.planos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.plano-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 30px;
+    position: relative;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.plano-card.destaque {
+    border: 2px solid #4CAF50;
+    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.15);
+}
+
+.plano-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.badge.economize {
+    background: #FF9800;
+}
+
+.plano-card h3 {
+    margin-top: 15px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.preco {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 20px 0 5px;
+    color: #4CAF50;
+}
+
+.total, .economia {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.economia {
+    color: #FF9800;
+    font-weight: 500;
+}
+
+.beneficios {
+    list-style: none;
+    padding: 0;
+    margin: 25px 0 30px;
+}
+
+.beneficios li {
+    padding: 8px 0;
+    position: relative;
+    padding-left: 30px;
+    line-height: 1.5;
+}
+
+.beneficios li:before {
+    content: "✓";
+    color: #4CAF50;
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.btn-plano {
+    width: 100%;
+    padding: 14px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-plano:hover {
+    background: #3e8e41;
+}
+
+.payment-card {
+    background: white;
+    border-radius: 12px;
+    padding: 35px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    margin-top: 40px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.card-input {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    border-radius: 6px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+}
+
+.btn-payment {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s;
+    margin-top: 10px;
+}
+
+.btn-payment:hover {
+    background: #3e8e41;
+}
+
+.payment-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 25px;
+    color: #666;
+    font-size: 14px;
+}
+
+.payment-security img {
+    height: 25px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .planos-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+</style>
+

@@ -1,0 +1,45 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+<h2>{% if conteudo %}Editar{% else %}Novo{% endif %} Conteúdo</h2>
+
+<form method="POST">
+    <div class="form-group">
+        <label>Título</label>
+        <input type="text" name="titulo" class="form-control" value="{{ conteudo.titulo if conteudo }}" required>
+    </div>
+    
+    <div class="form-group">
+        <label>Matéria</label>
+        <select name="materia_id" class="form-control" required>
+            {% for m in materias %}
+            <option value="{{ m.id }}" {% if conteudo and conteudo.materia_id == m.id %}selected{% endif %}>
+                {{ m.nome }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label>Tipo</label>
+            <select name="tipo" class="form-control" required>
+                <option value="video" {% if conteudo and conteudo.tipo == 'video' %}selected{% endif %}>Vídeo</option>
+                <option value="audio" {% if conteudo and conteudo.tipo == 'audio' %}selected{% endif %}>Áudio</option>
+                <option value="pdf" {% if conteudo and conteudo.tipo == 'pdf' %}selected{% endif %}>PDF</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label>Ordem</label>
+            <input type="number" name="ordem" class="form-control" value="{{ conteudo.ordem if conteudo else 0 }}">
+        </div>
+    </div>
+    
+    <div class="form-check mb-3">
+        <input type="checkbox" name="pago" id="pago" class="form-check-input" {% if conteudo and conteudo.pago %}checked{% endif %}>
+        <label for="pago" class="form-check-label">Conteúdo Premium</label>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pagamento.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="payment-container">
+    <h2>Escolha seu Plano Anual</h2>
+    
+    <div class="planos-grid">
+        <!-- Plano Anual Parcelado -->
+        <div class="plano-card {% if plano == 'anual_parcelado' %}destaque{% endif %}">
+            <div class="badge">12x sem juros</div>
+            <h3>Plano Anual Parcelado</h3>
+            <div class="preco">12x de R$ 47<small>,50</small></div>
+            <div class="total">Total: R$ 570,00</div>
+            <ul class="beneficios">
+                <li>Acesso imediato a todos os conteúdos</li>
+                <li>Parcelamento em 12 vezes</li>
+                <li>Renovação automática após 1 ano</li>
+                <li>Cancelamento a qualquer momento</li>
+            </ul>
+            <form method="POST" action="{{ url_for('pagamento') }}">
+                <input type="hidden" name="plano" value="anual_parcelado">
+                <button type="submit" class="btn-plano">Assinar Agora</button>
+            </form>
+        </div>
+
+        <!-- Plano Anual à Vista -->
+        <div class="plano-card {% if plano == 'anual_avista' %}destaque{% endif %}">
+            <div class="badge economize">Economize R$ 116</div>
+            <h3>Plano Anual à Vista</h3>
+            <div class="preco">R$ 456<small>,00</small></div>
+            <div class="economia">20% de desconto</div>
+            <ul class="beneficios">
+                <li>Acesso imediato a todos os conteúdos</li>
+                <li>Melhor custo-benefício</li>
+                <li>Pagamento único sem preocupações</li>
+                <li>Renovação automática após 1 ano</li>
+            </ul>
+            <form method="POST" action="{{ url_for('pagamento') }}">
+                <input type="hidden" name="plano" value="anual_avista">
+                <button type="submit" class="btn-plano">Assinar Agora</button>
+            </form>
+        </div>
+    </div>
+
+    {% if plano %}
+    <div class="payment-card">
+        <h3>Pagamento - {% if plano == 'anual_parcelado' %}Plano Anual (12x de R$ 79,00){% else %}Plano Anual à Vista (R$ 790,00){% endif %}</h3>
+        
+        <form id="payment-form" method="POST" action="{{ url_for('processar_pagamento') }}">
+            <input type="hidden" name="plano" value="{{ plano }}">
+            
+            <div class="form-group">
+                <label for="card-number">Número do Cartão</label>
+                <div id="card-number" class="card-input"></div>
+                <div id="card-brand" class="card-brand"></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="card-expiry">Validade (MM/AA)</label>
+                    <div id="card-expiry" class="card-input"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="card-cvc">Código de Segurança</label>
+                    <div id="card-cvc" class="card-input"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="card-name">Nome no Cartão</label>
+                <input type="text" id="card-name" name="card-name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="cpf">CPF do Titular</label>
+                <input type="text" id="cpf" name="cpf" class="form-control" placeholder="000.000.000-00" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="coupon">Cupom de Desconto (opcional)</label>
+                <input type="text" id="coupon" name="coupon" class="form-control">
+            </div>
+            
+            <button type="submit" class="btn-payment">
+                {% if plano == 'anual_parcelado' %}
+                    Pagar 1ª Parcela de R$ 79,00
+                {% else %}
+                    Pagar R$ 790,00
+                {% endif %}
+            </button>
+            
+            <div class="payment-security">
+                <img src="{{ url_for('static', filename='img/payment-security.png') }}" alt="Pagamento seguro">
+                <span>Pagamento 100% seguro</span>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+
+<!--javascript do pagamento-->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Máscara para Número do Cartão
+        const cardNumber = document.getElementById('card-number');
+        cardNumber.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value.substring(0, 19);
+            detectCardBrand(value);
+        });
+    
+        // Detecção da Bandeira do Cartão
+        function detectCardBrand(number) {
+            const brandContainer = document.getElementById('card-brand');
+            number = number.replace(/\s/g, '');
+            
+            const brands = {
+                visa: /^4/,
+                mastercard: /^5[1-5]/,
+                amex: /^3[47]/,
+                diners: /^3(?:0[0-5]|[68][0-9])/,
+                discover: /^6(?:011|5|4[4-9])/,
+                jcb: /^(?:2131|1800|35\d{3})/
+            };
+            
+            brandContainer.innerHTML = '';
+            for (const [brand, pattern] of Object.entries(brands)) {
+                if (pattern.test(number)) {
+                    const img = document.createElement('img');
+                    img.src = `{{ url_for('static', filename='img/${brand}.png') }}`;
+                    img.alt = brand;
+                    brandContainer.appendChild(img);
+                    break;
+                }
+            }
+        }
+    
+        // Máscara para Validade
+        const cardExpiry = document.getElementById('card-expiry');
+        cardExpiry.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value.substring(0, 5);
+        });
+    
+        // Máscara para CVC
+        const cardCvc = document.getElementById('card-cvc');
+        cardCvc.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+    
+        // Máscara para CPF
+        const cpfField = document.getElementById('cpf');
+        cpfField.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 3) value = value.replace(/^(\d{3})(\d)/g, '$1.$2');
+            if (value.length > 6) value = value.replace(/^(\d{3})\.(\d{3})(\d)/g, '$1.$2.$3');
+            if (value.length > 9) value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/g, '$1.$2.$3-$4');
+            e.target.value = value.substring(0, 14);
+        });
+    
+        // Validação do Nome
+        const cardName = document.getElementById('card-name');
+        cardName.addEventListener('blur', function() {
+            if (this.value.split(' ').length < 2) {
+                this.classList.add('invalid');
+            } else {
+                this.classList.remove('invalid');
+            }
+        });
+    
+        // Validação do Formulário
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Valida Nome
+            if (cardName.value.split(' ').length < 2) {
+                cardName.classList.add('invalid');
+                isValid = false;
+            }
+            
+            // Valida Número do Cartão (pelo menos 16 dígitos)
+            if (cardNumber.value.replace(/\s/g, '').length < 16) {
+                cardNumber.classList.add('invalid');
+                isValid = false;
+            }
+            
+            // Valida Validade (MM/AA completo)
+            if (cardExpiry.value.length < 5) {
+                cardExpiry.classList.add('invalid');
+                isValid = false;
+            }
+            
+            // Valida CVC (3 ou 4 dígitos)
+            if (cardCvc.value.length < 3) {
+                cardCvc.classList.add('invalid');
+                isValid = false;
+            }
+            
+            // Valida CPF (completo)
+            if (cpfField.value.length < 14) {
+                cpfField.classList.add('invalid');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Por favor, preencha todos os campos corretamente');
+            }
+        });
+    });
+    </script>
+    </script>
+    {% endblock %}

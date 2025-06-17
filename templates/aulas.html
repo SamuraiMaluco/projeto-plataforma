@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block title %}Aulas - StudyDB{% endblock %}
+
+{% block css %}
+<!-- CSS específico da página de aulas -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/aulas.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="aulas-container">
+    <!-- Cabeçalho da página -->
+    <div class="aulas-header">
+        <h1><i class="fas fa-book-open"></i> Biblioteca de Aulas</h1>
+        <p>Explore nossos conteúdos jurídicos organizados por matéria</p>
+        
+        <!-- Barra de pesquisa (opcional) -->
+        <div class="search-box">
+            <input type="text" placeholder="Pesquisar aulas..." id="searchInput">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+
+    <!-- Listagem de matérias -->
+    <div class="materias-list">
+        {% for materia in materias if materia.visivel %}
+        <div class="materia-card" id="materia-{{ materia.id }}">
+            <!-- Cabeçalho da matéria (clicável) -->
+            <div class="materia-header" onclick="toggleConteudos('{{ materia.id }}')">
+                <div class="materia-icon-title">
+                    <div class="materia-icon">
+                        <i class="fas fa-{{ materia.icone }}"></i>
+                    </div>
+                    <h2>{{ materia.nome }}</h2>
+                </div>
+                <div class="materia-meta">
+                    <span class="aulas-count">{{ materia.conteudos.count() }} aulas</span>
+                    <i class="toggle-arrow fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <!-- Lista de conteúdos (inicialmente oculta) -->
+            <div class="conteudos-list" id="conteudos-{{ materia.id }}" style="display: none;">
+                {% for conteudo in materia.conteudos.order_by('ordem') %}
+                <a href="{{ url_for('ver_conteudo', conteudo_id=conteudo.id) }}" 
+                   class="conteudo-item {% if conteudo.pago %}premium{% endif %}"
+                   data-tipo="{{ conteudo.tipo }}">
+                    <div class="conteudo-icon">
+                        {% if conteudo.tipo == 'video' %}
+                        <i class="fas fa-play"></i>
+                        {% elif conteudo.tipo == 'audio' %}
+                        <i class="fas fa-headphones"></i>
+                        {% elif conteudo.tipo == 'pdf' %}
+                        <i class="fas fa-file-pdf"></i>
+                        {% else %}
+                        <i class="fas fa-file-alt"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="conteudo-info">
+                        <h3>{{ conteudo.titulo }}</h3>
+                        <div class="conteudo-meta">
+                            {% if conteudo.duracao_segundos %}
+                            <span class="duracao">
+                                <i class="fas fa-clock"></i>
+                                {{ "%02d:%02d"|format(conteudo.duracao_segundos // 60, conteudo.duracao_segundos % 60) }}
+                            </span>
+                            {% endif %}
+                            
+                            {% if conteudo.pago %}
+                            <span class="premium-tag">
+                                <i class="fas fa-crown"></i> Premium
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="conteudo-action">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Modal para conteúdo premium (oculto inicialmente) -->
+<div id="premiumModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3><i class="fas fa-crown"></i> Conteúdo Premium</h3>
+        <p>Esta aula é exclusiva para assinantes. Assine agora para desbloquear:</p>
+        <ul>
+            <li><i class="fas fa-check"></i> Todas as videoaulas premium</li>
+            <li><i class="fas fa-check"></i> Materiais complementares</li>
+            <li><i class="fas fa-check"></i> Certificado de conclusão</li>
+        </ul>
+        <a href="{{ url_for('pagamento') }}" class="btn-assinar">Assinar Agora</a>
+    </div>
+</div>
+{% endblock %}
+
+<div id="assinatura-modal" class="close-modal">
+    <div class="modal-content">
+        <span class ="close-modal">&times;</span>
+        <h3><i class="fas fa-crown"></i> Conteúdo Premium</h3>
+        <p>Para acessar este conteúdo, você precisa assinar o plano:</p>
+        <div class="planos-container">
+            <div class="plano-card" onclick="selecionarPlano('mensal')">
+              <h4>Plano Mensal</h4>
+              <div class="preco">R$ 29,90/mês</div>
+              <ul>
+                <li><i class="fas fa-check"></i> Acesso a todos os conteúdos</li>
+                <li><i class="fas fa-check"></i> Suporte prioritário</li>
+              </ul>
+            </div>
+            
+            <div class="plano-card" onclick="selecionarPlano('anual')">
+              <h4>Plano Anual</h4>
+              <div class="preco">R$ 299,00/ano <span>(Economize 20%)</span></div>
+              <ul>
+                <li><i class="fas fa-check"></i> Todos os benefícios do mensal</li>
+                <li><i class="fas fa-check"></i> 2 e-books exclusivos</li>
+              </ul>
+            </div>
+          </div>
+          
+          <button id="confirmarPlano" class="btn-pagamento" disabled>Selecione um plano</button>
+    </div>
+
+</div>
+
+
+
+
+
+{% block scripts %}
+
+<script>
+<!--Javascript da assinatura-->
+// Variável global para armazenar o plano selecionado
+let planoSelecionado = null;
+
+// Função para abrir o modal quando conteúdo premium for clicado
+document.querySelectorAll('.conteudo-premium').forEach(item => {
+  item.addEventListener('click', function(e) {
+    // Verifica se usuário tem assinatura (substitua por sua lógica real)
+    const usuarioAssinante = {{ 'true' if current_user.is_authenticated and current_user.assinatura_valida else 'false' }};
+    
+    if (!usuarioAssinante) {
+      e.preventDefault();
+      document.getElementById('assinaturaModal').style.display = 'block';
+    }
+  });
+});
+
+// Função para selecionar plano
+function selecionarPlano(plano) {
+  planoSelecionado = plano;
+  document.querySelectorAll('.plano-card').forEach(card => {
+    card.classList.remove('selecionado');
+  });
+  event.currentTarget.classList.add('selecionado');
+  document.getElementById('confirmarPlano').disabled = false;
+}
+
+// Confirmar plano e redirecionar para pagamento
+document.getElementById('confirmarPlano').addEventListener('click', function() {
+  if (planoSelecionado) {
+    window.location.href = `/pagamento?plano=${planoSelecionado}`;
+  }
+});
+
+// Fechar modal
+document.querySelector('.close-modal').addEventListener('click', function() {
+  document.getElementById('assinaturaModal').style.display = 'none';
+});
+
+</script>
+
+
+
+<!-- JavaScript específico de aulas.html -->
+<script>
+// Função para alternar a exibição dos conteúdos
+function toggleConteudos(materiaId) {
+    const conteudosList = document.getElementById(`conteudos-${materiaId}`);
+    const toggleArrow = document.querySelector(`#materia-${materiaId} .toggle-arrow`);
+    
+    if (conteudosList.style.display === 'none') {
+        conteudosList.style.display = 'block';
+        toggleArrow.classList.remove('fa-chevron-down');
+        toggleArrow.classList.add('fa-chevron-up');
+    } else {
+        conteudosList.style.display = 'none';
+        toggleArrow.classList.remove('fa-chevron-up');
+        toggleArrow.classList.add('fa-chevron-down');
+    }
+}
+
+// Filtro de pesquisa
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const materias = document.querySelectorAll('.materia-card');
+    
+    materias.forEach(materia => {
+        const materiaName = materia.querySelector('h2').textContent.toLowerCase();
+        const conteudos = materia.querySelectorAll('.conteudo-item');
+        let hasMatch = materiaName.includes(searchTerm);
+        
+        conteudos.forEach(conteudo => {
+            const conteudoTitle = conteudo.querySelector('h3').textContent.toLowerCase();
+            const matches = conteudoTitle.includes(searchTerm);
+            
+            if (matches) {
+                conteudo.style.display = 'flex';
+                hasMatch = true;
+            } else {
+                conteudo.style.display = 'none';
+            }
+        });
+        
+        materia.style.display = hasMatch ? 'block' : 'none';
+    });
+});
+
+// Controle de conteúdos premium
+document.querySelectorAll('.conteudo-item.premium').forEach(item => {
+    item.addEventListener('click', function(e) {
+        {% if not assinatura_ativa %}
+        e.preventDefault();
+        document.getElementById('premiumModal').style.display = 'block';
+        {% endif %}
+    });
+});
+
+// Fechar modal
+document.querySelector('.close-modal').addEventListener('click', function() {
+    document.getElementById('premiumModal').style.display = 'none';
+});
+
+// Fechar modal ao clicar fora
+window.addEventListener('click', function(e) {
+    const modal = document.getElementById('premiumModal');
+    if (e.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+
+// Inicialização - expande a primeira matéria por padrão
+document.addEventListener('DOMContentLoaded', function() {
+    const primeiraMateria = document.querySelector('.materia-card');
+    if (primeiraMateria) {
+        toggleConteudos(primeiraMateria.id.split('-')[1]);
+    }
+});
+</script>
+{% endblock %}

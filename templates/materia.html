@@ -1,0 +1,43 @@
+{% extends "home.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Matérias Disponíveis</h2>
+    
+    {% for ramo, materias in materias_por_ramo.items() %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3>{{ ramo }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for materia in materias %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-{{ materia.icone }} fa-3x mb-3"></i>
+                            <h5>{{ materia.nome }}</h5>
+                            <span class="badge bg-{{ 'success' if materia.nivel == 'Básico' else 'warning' if materia.nivel == 'Intermediário' else 'danger' }}">
+                                {{ materia.nivel }}
+                            </span>
+                            {% if assinatura_ativa %}
+    <a href="{{ url_for('conteudos_materia', materia_id=materia.id) }}" 
+       class="btn btn-primary mt-2">
+        Acessar Conteúdos
+    </a>
+{% else %}
+    <a href="{{ url_for('pagamento') }}" 
+       class="btn btn-secondary mt-2">
+        Assine para Acessar
+    </a>
+{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
