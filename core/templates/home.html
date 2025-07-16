@@ -1,126 +1,101 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Home - Plataforma de Estudos{% endblock %}
-
-{% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-{% endblock %}
+{% block body_class %}home-page{% endblock %}
 
 {% block content %}
-<div class="main-container">
-  <!-- Box Principal -->
-  <div class="content-box">
-    <div class="welcome-section">
-      <h1>Bem-vindo, <span>{{ username }}</span>!</h1>
-      <p class="subtext">{{ mensagem }}</p>
-    </div>
-
-    <div class="features-grid">
-      <!-- Card Simulados -->
-      <div class="feature-card">
-        <div class="card-icon">
-          <i class="fas fa-clipboard-list"></i>
+<div class="dashboard">
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+        <h1 class="welcome-title">
+            Olá, <span>{{ current_user.username }}</span>
+        </h1>
+        
+        <div class="progress-summary">
+            <div class="progress-card">
+                <div class="progress-icon bg-primary">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="progress-info">
+                    <h3>{{ progress.completed_lessons }}/{{ progress.total_lessons }}</h3>
+                    <p>Aulas completas</p>
+                </div>
+            </div>
+            
+            <div class="progress-card">
+                <div class="progress-icon bg-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="progress-info">
+                    <h3>{{ progress.completion_percentage }}%</h3>
+                    <p>Progresso total</p>
+                </div>
+            </div>
         </div>
-        <h3>Simulados</h3>
-        <p>Teste seus conhecimentos com questões atualizadas</p>
-        <a href="{{ url_for('simulados') }}" class="card-button">Acessar</a>
-      </div>
+    </section>
 
-      <!-- Card Aulas -->
-      <div class="feature-card">
-        <div class="card-icon">
-          <i class="fas fa-book-open"></i>
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <h2 class="section-title">
+            <i class="fas fa-bolt"></i> Comece agora
+        </h2>
+        
+        <div class="action-grid">
+            <a href="{{ url_for('content.list_lessons') }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-play-circle"></i>
+                </div>
+                <h3>Continuar estudando</h3>
+                <p>Retome suas aulas</p>
+            </a>
+            
+            <a href="{{ url_for('exams.start') }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <h3>Fazer simulado</h3>
+                <p>Teste seus conhecimentos</p>
+            </a>
         </div>
-        <h3>Aulas</h3>
-        <p>Conteúdo didático organizado por matéria</p>
-        <a href="{{ url_for('aulas') }}" class="card-button">Acessar</a>
-      </div>
+    </section>
 
-      <!-- Card Progresso -->
-      <div class="feature-card">
-        <div class="card-icon">
-          <i class="fas fa-chart-line"></i>
+    <!-- Recent Activity -->
+    <section class="recent-activity">
+        <h2 class="section-title">
+            <i class="fas fa-history"></i> Atividade recente
+        </h2>
+        
+        <div class="activity-list">
+            {% for activity in recent_activities %}
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-{{ activity.icon }}"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>{{ activity.title }}</h4>
+                    <p class="activity-meta">
+                        {{ activity.timestamp|time_ago }} • 
+                        <span class="text-{{ activity.status }}">{{ activity.status_label }}</span>
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        <h3>Seu Progresso</h3>
-        <p>Acompanhe seu desenvolvimento</p>
-        <a href="{{ url_for('progresso') }}" class="card-button">Ver</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Elemento "Em Breve" discreto -->
-  <div class="coming-soon-tag">
-    <span>Novidades em breve</span>
-  </div>
+    </section>
 </div>
+{% endblock %}
 
-
-
-
-
-  <!--Javascript do home-->
-
-
-
-
-
-
-  {% endblock %}
-
-  {% block inline_scripts %}
-
-
+{% block scripts %}
 <script>
-  // Verifica se é a página home
-  if (document.body.classList.contains('home-page')) {
-      // Carrossel
-      const initCarousel = () => {
-          const carousel = document.querySelector('.carousel');
-          if (!carousel) return;
-
-          let currentIndex = 0;
-          const items = carousel.querySelectorAll('.carousel-item');
-          const totalItems = items.length;
-
-          function showItem(index) {
-              items.forEach((item, i) => {
-                  item.style.display = i === index ? 'block' : 'none';
-              });
-          }
-
-          function nextItem() {
-              currentIndex = (currentIndex + 1) % totalItems;
-              showItem(currentIndex);
-          }
-
-          // Controles
-          const prevBtn = carousel.querySelector('.carousel-prev');
-          const nextBtn = carousel.querySelector('.carousel-next');
-
-          if (prevBtn) prevBtn.addEventListener('click', () => {
-              currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-              showItem(currentIndex);
-          });
-
-          if (nextBtn) nextBtn.addEventListener('click', nextItem);
-
-          // Auto-rotación
-          let interval = setInterval(nextItem, 5000);
-
-          // Pausa ao interagir
-          carousel.addEventListener('mouseenter', () => clearInterval(interval));
-          carousel.addEventListener('mouseleave', () => {
-              interval = setInterval(nextItem, 5000);
-          });
-
-          showItem(0);
-      };
-
-      // Inicializa quando o DOM estiver pronto
-      domReady(function() {
-          initCarousel();
-          console.log('Home page inicializada');
-      });
-  }
+// Inicialização específica da home
+document.addEventListener('DOMContentLoaded', () => {
+    // Exemplo: Atualização em tempo real do progresso
+    if (typeof window.apiService !== 'undefined') {
+        window.apiService.getProgress('{{ current_user.id }}')
+            .then(data => {
+                console.log('Progresso atual:', data);
+                // Atualiza UI aqui
+            });
+    }
+});
 </script>
 {% endblock %}

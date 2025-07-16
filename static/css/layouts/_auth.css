@@ -1,0 +1,26 @@
+.auth-page {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    padding: 2rem;
+}
+
+.auth-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    overflow: hidden;
+}
+
+.auth-card__header {
+    padding: 2rem;
+    text-align: center;
+    background: var(--color-light);
+}
+
+.auth-form {
+    padding: 2rem;
+}

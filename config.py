@@ -4,6 +4,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://th:Samurai3@localhost:5432/study_db_v2'
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 3600
+    }
     SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_key')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

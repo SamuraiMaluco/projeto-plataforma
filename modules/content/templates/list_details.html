@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lesson.title }} | Study Platform{% endblock %}
+{% block body_class %}lesson-detail-page{% endblock %}
+
+{% block content %}
+<div class="lesson-detail-container">
+    <!-- Cabeçalho com Breadcrumb -->
+    <nav class="lesson-breadcrumb">
+        <a href="{{ url_for('content.list_lessons') }}">Aulas</a> >
+        <a href="{{ url_for('content.subject', subject_id=lesson.subject.id) }}">{{ lesson.subject.name }}</a> >
+        <span>{{ lesson.title }}</span>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="lesson-content">
+        <!-- Player de Mídia -->
+        {% if lesson.type == 'video' %}
+        <div class="lesson-player">
+            <video controls poster="{{ lesson.thumbnail_url }}">
+                <source src="{{ lesson.media_url }}" type="video/mp4">
+            </video>
+        </div>
+        {% elif lesson.type == 'audio' %}
+        <div class="lesson-player audio">
+            <audio controls>
+                <source src="{{ lesson.media_url }}" type="audio/mpeg">
+            </audio>
+        </div>
+        {% endif %}
+
+        <!-- Conteúdo em Texto -->
+        <div class="lesson-text">
+            <h1>{{ lesson.title }}</h1>
+            {{ lesson.content|safe }}
+        </div>
+    </div>
+
+    <!-- Controles de Progresso -->
+    <div class="lesson-actions">
+        <button class="btn btn-primary mark-as-completed"
+                data-lesson-id="{{ lesson.id }}"
+                id="completeLessonBtn">
+            <i class="fas fa-check-circle"></i>
+            {{ 'Aula Concluída' if lesson.completed else 'Marcar como Concluída' }}
+        </button>
+        
+        <div class="lesson-navigation">
+            {% if prev_lesson %}
+            <a href="{{ url_for('content.lesson_detail', lesson_id=prev_lesson.id) }}" 
+               class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Anterior
+            </a>
+            {% endif %}
+            
+            {% if next_lesson %}
+            <a href="{{ url_for('content.lesson_detail', lesson_id=next_lesson.id) }}" 
+               class="btn btn-primary">
+                Próxima <i class="fas fa-arrow-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module">
+const lessonService = new LessonService();
+    const completeBtn = document.getElementById('completeLessonBtn');
+    
+    if (completeBtn) {
+        completeBtn.addEventListener('click', async () => {
+            const lessonId = completeBtn.dataset.lessonId;
+            try {
+                const result = await lessonService.toggleComplete(lessonId);
+                if (result.completed) {
+                    completeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Aula Concluída';
+                    completeBtn.classList.add('completed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+;
+
+
+
+</script>
+{% endblock %}

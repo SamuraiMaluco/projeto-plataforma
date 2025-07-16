@@ -1,9 +1,11 @@
 from core.extensions import db
 from flask_login import UserMixin
 from datetime import datetime
+from core.extensions import db
+from werkzeug.security import generate_password_hash
 
 class User(db.Model, UserMixin):
-    __tablename__ = 'users'
+    __tablename__ = 'auth_users'
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -34,3 +36,22 @@ class Subscription(db.Model):
     payments = db.relationship('Payment', back_populates='subscription')
     def __repr__(self):
         return f'<User {self.username}>'
+    
+    
+    #criando um admin
+    def create_default_admin():
+        from .models import User 
+        
+        #verificar se existe um cargo de admin
+        admin_exists = User.query.filter_by(username='admin').first()
+        if not admin_exists:
+            admin = User(
+                username = 'admin',
+                email='admindb@user.com',
+                password=generate_password_hash("senha123"),
+                is_admin=True
+            )
+        db.session.ad(admin)
+        db.session.commit()
+        print('Administrador criado com sucesso!')
+        

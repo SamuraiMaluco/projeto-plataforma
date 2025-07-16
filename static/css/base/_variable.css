@@ -1,0 +1,44 @@
+:root {
+    /* o principal de tudo  (suas cores no caso)*/
+    --color-primary: #4e73df;
+    --color-primary-dark: #2e59d9;
+    --color-secondary: #858796;
+    --color-success: #1cc88a;
+    --color-info: #36b9cc;
+    --color-warning: #f6c23e;
+    --color-danger: #e74a3b;
+  
+
+
+    /*cores de texto*/
+    --color-text: #5a5c69;
+    --color-text-light: #858796;
+    --color-heading: #2e2f37;
+
+    /*Espaçamentos*/
+    --spacing-unit: 1rem
+    --spacing-sm: calc(var(--spacing-unit) * 0.5);
+    --spacing-md: var(--spacing-unit);
+    --spacing-lg: calc(var(--spacing-unit) * 1.5);
+
+    /*bordas*/
+    --border-radius: 0.35rem;
+    --border-color: #e3e6f0;
+
+    /* Sombras */
+    --shadow-sm: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  
+    /* Transições */
+    --transition-base: all 0.3s ease-in-out;
+}
+
+    /* Tipografia */
+:root {
+    --font-family-sans: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-size-base: 1rem;
+    --line-height-base: 1.5;
+}
+
+

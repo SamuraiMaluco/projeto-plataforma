@@ -1,36 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/static/css/cadastro.css">
-</head>
-<header> <h1>Bem-vindo! Preencha os campos abaixo para iniciar nossa jornada juntos!</h1></header>
-<body>
-    <div class="novo">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-        <form action="/register" method="post">
-            <label for="nome">Nome</label>
-            <input type="text" name="username" id="username" placeholder="nome">
-            <label for="email">Email</label>
-            <input type="email" name="email" placeholder="email">
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" placeholder="senha">
-            <button class="meu-botao" type="submit" value="cadastrar">cadastrar</button>
-        
+{% extends "base.html" %}
+
+{% block title %}Cadastre-se{% endblock %}
+{% block body_class %}auth-page register-page{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <i class="fas fa-user-plus"></i>
+            <h1>Crie sua conta</h1>
+            <p>Comece sua jornada de estudos</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form" id="registerForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="username" class="form-label">
+                    <i class="fas fa-user"></i> Nome de usuário
+                </label>
+                <input type="text" id="username" name="username" class="form-control"
+                    placeholder="Escolha um nome de usuário" required
+                    minlength="3" maxlength="20">
+                <div class="form-feedback" id="usernameFeedback"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">
+                    <i class="fas fa-envelope"></i> E-mail
+                </label>
+                <input type="email" id="email" name="email" class="form-control"
+                    placeholder="seu@email.com" required>
+                <div class="form-feedback" id="emailFeedback"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <i class="fas fa-lock"></i> Senha
+                </label>
+                <input type="password" id="password" name="password" class="form-control"
+                    placeholder="••••••••" required
+                    minlength="8" data-requirements="true">
+                <div class="password-requirements">
+                    <small>A senha deve conter:</small>
+                    <ul>
+                        <li data-requirement="length">Mínimo 8 caracteres</li>
+                        <li data-requirement="uppercase">1 letra maiúscula</li>
+                        <li data-requirement="number">1 número</li>
+                        <li data-requirement="special">1 caractere especial</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password" class="form-label">
+                    <i class="fas fa-lock"></i> Confirme a senha
+                </label>
+                <input type="password" id="confirm_password" name="confirm_password"
+                    class="form-control" placeholder="••••••••" required>
+                <div class="form-feedback" id="passwordFeedback"></div>
+            </div>
+
+            <div class="form-group form-check">
+                <input type="checkbox" id="terms" name="terms" class="form-check-input" required>
+                <label for="terms" class="form-check-label">
+                    Eu concordo com os <a href="{{ url_for('main.terms') }}">Termos de Serviço</a>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+                    <i class="fas fa-user-plus"></i> Criar conta
+                </button>
+            </div>
         </form>
-    </div>    
-    <script>
-        document.getElementById('Voltar ao login').addEventListener(click, function() {
-            window.location.href = "{{url_for('login')}}";
+
+        <div class="auth-card__footer">
+            <p>Já tem uma conta? <a href="{{ url_for('auth.login') }}">Faça login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{ % block scripts %}
+<script type = "module">
+    import { AuthService } from '/static/js/services/auth.services.js';
+    import { FormValidator } from 'static/js/services/form-validator.js';
+
+    document.addEventListener('DOMContentLoades', () => {
+        const authService = new AuthService();
+        const validator = new FormValidator('registerForm');
+
+        //validação em JS
+        validator.initValidation({
+            username : { minLength: 3, maxLength: 20},
+            email: {type: 'email'},
+            password: {
+                minLength: 8,
+                requireUppercase: true,
+                requireNumber: true,
+                requireSpecialChar: true
+            },
+            confirm_password: { matchField: 'password'}
         });
-    </script>
-</body>
-</html>
+//enviar formulário
+document.getElementBYId('registerForm').addEventListener('submit', async (e) => {
+  if (validator.validateAll()) {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando conta...';
+            
+            try {
+                const formData = new FormData(e.target);
+                const response = await authService.register({
+                    username: formData.get('username'),
+                    email: formData.get('email'),
+                    password: formData.get('password')
+                });
+                
+                if (response.success) {
+                    window.location.href = response.redirect || '/';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                validator.displayServerError(error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Criar conta';
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+    
+</script>

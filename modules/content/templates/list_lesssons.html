@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Aulas Disponíveis{% endblock %}
+{% block body_class %}lessons-list-page{% endblock %}
+
+{% block content %}
+<div class="lessons-container">
+    <!-- Filtros -->
+    <div class="lessons-filters">
+        <div class="filter-group">
+            <label for="subject-filter"><i class="fas fa-filter"></i> Matéria:</label>
+            <select id="subject-filter" class="form-select">
+                <option value="all">Todas</option>
+                {% for subject in subjects %}
+                <option value="{{ subject.slug }}">{{ subject.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Lista de Aulas -->
+    <div class="lessons-grid">
+        {% for lesson in lessons %}
+        <a href="{{ url_for('content.lesson_detail', lesson_id=lesson.id) }}" class="lesson-card">
+            <div class="lesson-card__media">
+                {% if lesson.type == 'video' %}
+                <i class="fas fa-play-circle"></i>
+                <img src="{{ lesson.thumbnail_url }}" alt="{{ lesson.title }}">
+                {% elif lesson.type == 'pdf' %}
+                <i class="fas fa-file-pdf"></i>
+                {% endif %}
+            </div>
+            <div class="lesson-card__body">
+                <h3>{{ lesson.title }}</h3>
+                <div class="lesson-meta">
+                    <span class="badge {{ lesson.level }}">{{ lesson.level }}</span>
+                    <span>{{ lesson.duration }} min</span>
+                </div>
+                {% if lesson.progress %}
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ lesson.progress }}%;"></div>
+                </div>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

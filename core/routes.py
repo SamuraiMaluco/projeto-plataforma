@@ -5,6 +5,11 @@ from modules.auth.models import User
 
 bp = Blueprint('core', __name__)
 
+@bp.route('/login')
+def login():
+    users = User.query.all()  # Exemplo de uso
+    return render_template('auth/login.html')
+
 @bp.route('/')
 def home():
     if not current_user.is_authenticated:

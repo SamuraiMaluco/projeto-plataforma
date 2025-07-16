@@ -9,13 +9,23 @@ from modules.payments import init_payments
 from modules.exams import init_exams  # Verifique se este módulo existe
 from modules.progress import init_progress  # Nome corrigido (com dois 's')
 import os
+from core import create_app
+
+app = create_app
+#inicialização de modulos deve acontecer DEPOIS de criar o app
+with app.app_context():
+    from modules.auth import inith_auth
+    init_auth(app)
+    
+db.engine.execute("SELECT 1")
+
 
 def create_app():
     app = Flask(__name__)
     
     # Configurações
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_key') 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://th:Samurai3@localhost:5432/study_db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://th:Samurai3@localhost:5432/study_db_v2'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['CRON_API_KEY'] = 'sua_chave_secreta_aqui'
     app.config['UPLOAD_FOLDER'] = 'static/uploads'
@@ -56,6 +66,6 @@ def create_app():
 
     return app
 
+app = create_app()
 if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True, port=5000)
+   app.run()

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Admin{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-tachometer-alt"></i> Painel de Controle</h1>
+        <div class="admin-actions">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newUserModal">
+                <i class="fas fa-user-plus"></i> Novo Usuário
+            </button>
+        </div>
+    </div>
+
+    <div class="admin-stats">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_users }}</h3>
+                <p>Usuários Registrados</p>
+                <small>{{ stats.new_users }} novos este mês</small>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_lessons }}</h3>
+                <p>Aulas Disponíveis</p>
+                <small>{{ stats.active_lessons }} ativas</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-tables">
+        <div class="table-responsive">
+            <h3><i class="fas fa-user-clock"></i> Últimos Usuários</h3>
+            <table class="admin-table">
+                <!-- Tabela de usuários -->
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para novo usuário -->
+<div class="modal fade" id="newUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Novo Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newUserForm">
+                    <!-- Formulário de novo usuário -->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

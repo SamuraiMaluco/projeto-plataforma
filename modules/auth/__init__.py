@@ -1,10 +1,15 @@
 from .routes import bp as auth_bp
 from .models import create_default_admin
+from flask import Blueprint
+
+bp = Blueprint('auth', __name__)
+
+# Importe as rotas no final para evitar imports circulares
+from . import routes
+
+
 
 def init_auth(app):
-    """Inicializa o módulo de autenticação"""
-    app.register_blueprint(auth_bp, url_prefix='/auth')
-    
-    # Cria usuário admin padrão se não existir
-    with app.app_context():
-        create_default_admin()
+    #importa localmente dentro da função
+    from .models import create_default_admin
+    create_default_admin()

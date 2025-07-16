@@ -1,0 +1,9 @@
+/* static/css/layouts/_admin.css */
+.admin-theme {
+  --color-primary: #6e3bdf;
+  --color-primary-dark: #4e2aa3;
+}
+
+[data-theme="admin"] {
+  /* Sobrescreve variáveis para o tema admin */
+}
