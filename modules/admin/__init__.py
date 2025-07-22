@@ -1,10 +1,19 @@
 from .routes import bp as admin_bp
-from .models import init_admin_models
+from flask import Blueprint
+#from .models import init_admin_models - a ideia era ter um banco de dados para o admin mas 
+
+
+bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+from . import routes
+
+@bp.route('/')
+def painel_admin():
+    return render_template('admin/dashboard.html')
 
 def init_admin(app):
     """Inicializa o módulo admin"""
-    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(admin_bp,__name__, url_prefix='/admin')
     
     # Inicializa modelos específicos
-    with app.app_context():
-        init_admin_models()
+   ##    init_admin_models()

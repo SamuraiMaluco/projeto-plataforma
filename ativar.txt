@@ -1,0 +1,4 @@
+.\venv\Scripts\activate (POWERSHELL)
+UTILIZAR PARA ATIVAR O AMBIENTE VIRTUAL QUE ESTA CONFIGURADO
+source venv/Scripts/activate (GIT BASH
+)

@@ -1,7 +1,10 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 class Config:
     SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://th:Samurai3@localhost:5432/study_db_v2'

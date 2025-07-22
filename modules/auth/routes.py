@@ -1,11 +1,15 @@
-from flask import Blueprint, request, flash, redirect, url_for, session
+from flask import Blueprint, request, flash, redirect, url_for, session, render_template
 from core.models import User
 from core.extensions import db
 from core.decorators import login_required
 from core.utils import validar_senha
 from werkzeug.security import generate_password_hash, check_password_hash
 from . .auth.models import User
-bp = Blueprint('auth', __name__)
+bp = Blueprint('auth', __name__, url_prefix='/auth')
+from .routes import bp as auth_bp
+
+def init_auth(app):
+    app.register_blueprint(auth_bp)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():

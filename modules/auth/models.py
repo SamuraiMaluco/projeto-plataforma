@@ -34,13 +34,14 @@ class Subscription(db.Model):
     # Relacionamentos
     user = db.relationship('User', back_populates='subscription')
     payments = db.relationship('Payment', back_populates='subscription')
-    def __repr__(self):
+def __repr__(self):
         return f'<User {self.username}>'
     
     
     #criando um admin
-    def create_default_admin():
-        from .models import User 
+def create_default_admin():
+        
+        from modules.auth.models import User 
         
         #verificar se existe um cargo de admin
         admin_exists = User.query.filter_by(username='admin').first()
@@ -51,7 +52,7 @@ class Subscription(db.Model):
                 password=generate_password_hash("senha123"),
                 is_admin=True
             )
-        db.session.ad(admin)
+        db.session.add(admin)
         db.session.commit()
         print('Administrador criado com sucesso!')
         
