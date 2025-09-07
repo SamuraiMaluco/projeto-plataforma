@@ -1,9 +1,10 @@
-from .models import init_progress_models
+from .models import TrabalhoProgresso, MateriaProgresso
 from .routes import bp as progress_bp
+from core.extensions import db
 
 def init_progress(app):
-    """Inicializa o módulo de progresso"""
+    #"""Inicializa o módulo de progresso"""
     app.register_blueprint(progress_bp, url_prefix='/progress')
     
     with app.app_context():
-        init_progress_models()
+        db.create_all()

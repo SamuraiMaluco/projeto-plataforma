@@ -1,107 +1,60 @@
+# /modules/progress/services.py
+
 from datetime import datetime
-from sqlalchemy import func, and_
 from core.extensions import db
-from modules.content.models import Lesson, Subject
+# Importamos os modelos corretos de conteúdo e progresso
+from modules.content.models import Lesson, Content
 from .models import LessonProgress, SubjectProgress
 
 class ProgressService:
-    @stathicmethod
-    def record_lesson_acess(user_id, lesson_id):
-        #registra o acesso e retrona o objeto lessonProgress
-        progress = LessonProgress.query.filter_by(
-            user_id=user_id,
-            lesson_id=lesson_id
-        ).first()
-        
-        if not progress:
-              progress = SubjectProgress(
-                user_id=user_id,
-                subject_id=subject_id
-            )
-        db.session.add(progress)
-        progress.completed_lessons = completed
-        progress.total_lessons = total
-        progress.progress_percentage = (completed / total * 100) if total > 0 else 0
-        progress.last_updated = datetime.utcnow()
-        
-        return progress
-
     @staticmethod
-    def get_user_progress(user_id, subject_id=None):
+    def complete_lesson(user_id, lesson_id):
         """
-        #Obtém o progresso consolidado
-        Retorna: Dict com estrutura:
-            {
-                'total': {completed: int, total: int, percentage: float},
-                'subjects': [
-                    {subject_id: int, name: str, completed: int, total: int, percentage: float}
-                ]
-            }
+        Esta função combina a sua lógica de 'salvar_progresso'.
+        Ela encontra ou cria o progresso da lição, marca como concluída,
+        e depois atualiza o progresso geral da matéria.
         """
-        result = {'total': {}, 'subjects': []}
-        
-        # Progresso geral
-        if subject_id:
-            # Progresso específico de uma matéria
-            progress = SubjectProgress.query.filter_by(
-                user_id=user_id,
-                subject_id=subject_id
-            ).first()
-            
-            if progress:
-                result['total'] = {
-                    'completed': progress.completed_lessons,
-                    'total': progress.total_lessons,
-                    'percentage': progress.progress_percentage
-                }
-        else:
-            # Progresso global
-            completed = LessonProgress.query.filter_by(
-                user_id=user_id,
-                is_completed=True
-            ).count()
-            
-            total = Lesson.query.count()
-            
-            result['total'] = {
-                'completed': completed,
-                'total': total,
-                'percentage': (completed / total * 100) if total > 0 else 0
-            }
-            
-            # Progresso por matéria
-            subjects = Subject.query.all()
-            for subject in subjects:
-                progress = SubjectProgress.query.filter_by(
-                    user_id=user_id,
-                    subject_id=subject.id
-                ).first()
-                
-                if progress:
-                    result['subjects'].append({
-                        'subject_id': subject.id,
-                        'name': subject.name,
-                        'completed': progress.completed_lessons,
-                        'total': progress.total_lessons,
-                        'percentage': progress.progress_percentage,
-                        'icon': subject.icon
-                    })
-        
-        return result
+        # Encontra ou cria o registo de progresso para a lição específica
+        lesson_progress = LessonProgress.query.filter_by(user_id=user_id, lesson_id=lesson_id).first()
 
-    @staticmethod
-    def get_lesson_status(user_id, lesson_id):
-        """
-        Verifica status específico de uma aula
-        Retorna: Dict com {is_completed: bool, last_accessed: datetime}
-        """
-        progress = LessonProgress.query.filter_by(
-            user_id=user_id,
-            lesson_id=lesson_id
-        ).first()
+        if not lesson_progress:
+            lesson_progress = LessonProgress(user_id=user_id, lesson_id=lesson_id)
+            db.session.add(lesson_progress)
         
-        return {
-            'is_completed': progress.is_completed if progress else False,
-            'last_accessed': progress.last_accessed if progress else None
-        }
-            
+        # Marca a lição como concluída e atualiza as datas
+        lesson_progress.is_completed = True
+        lesson_progress.last_accessed = datetime.utcnow()
+        lesson_progress.completion_date = datetime.utcnow()
+
+        # Atualiza o progresso agregado da matéria
+        lesson = Lesson.query.get(lesson_id)
+        if not lesson:
+            raise Exception("Lição não encontrada")
+        
+        subject_id = lesson.content.subject_id
+        
+        # Conta o total de lições na matéria
+        total_lessons_in_subject = Lesson.query.join(Content).filter(Content.subject_id == subject_id).count()
+
+        # Conta as lições concluídas pelo utilizador nesta matéria
+        completed_lessons_count = db.session.query(LessonProgress).join(Lesson).join(Content).filter(
+            LessonProgress.user_id == user_id,
+            Content.subject_id == subject_id,
+            LessonProgress.is_completed == True
+        ).count()
+
+        # Encontra ou cria o registo de progresso para a matéria
+        subject_progress = SubjectProgress.query.filter_by(user_id=user_id, subject_id=subject_id).first()
+
+        if not subject_progress:
+            subject_progress = SubjectProgress(user_id=user_id, subject_id=subject_id)
+            db.session.add(subject_progress)
+
+        # Atualiza os valores do progresso da matéria
+        subject_progress.completed_lessons = completed_lessons_count
+        subject_progress.total_lessons = total_lessons_in_subject
+        subject_progress.progress_percentage = (completed_lessons_count / total_lessons_in_subject * 100) if total_lessons_in_subject > 0 else 0
+        subject_progress.last_updated = datetime.utcnow()
+
+        db.session.commit()
+        return lesson_progress, subject_progress

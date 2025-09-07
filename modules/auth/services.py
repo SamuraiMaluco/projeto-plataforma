@@ -1,4 +1,4 @@
-from core.models import User
+
 from core.extensions import db
 from core.utils import validar_senha
 
