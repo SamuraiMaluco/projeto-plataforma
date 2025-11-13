@@ -1,8 +1,8 @@
 # /run.py
 from core import create_app
-# Adicione estas importações no topo
 from core.extensions import db
 from modules.auth.models import User
+from modules.content.models import Subject, Content, Lesson
 import click
 
 app = create_app()
@@ -30,6 +30,33 @@ def create_admin(username, email, password):
         print(f"Ocorreu um erro: {e}")
         db.session.rollback()
 
+@app.cli.command("seed-db")
+def seed_db():
+    # Popula a base de dados com dados iniciais para testes
+    print("A popular a base de dados com dados iniciais...")
+    try:
+        #cria uma Matéria (subject) de exemplo
+        subject1 = Subject(name= "Introdução")
+
+        #cria um conteúdo (Content) de exemplo
+        content1 = Content(tittle = "bem-vindo", description = "Bem-vindo e obrigado por experimentatr nosso sistema")
+
+        #cria uma lição (Lesson) de exemplo
+        lesson1 = Lesson(tittle = "Primeira Lição", order=1, content = "Conteúdo da primeira lição", subject = subject1)
+        lesson2 = Lesson(tittle = "Segunda Lição", order=2, content = "Conteúdo da segunda lição", subject = subject1)
+        lesson3 = Lesson(tittle = "Terceira Lição", order=3, content = "Conteúdo da terceira lição", subject = subject1)
+
+        db.session.add(subject1)
+        db.session.add(content1)
+        db.session.add(lesson1)
+        db.session.add(lesson2)
+        db.session.add(lesson3)
+        
+        db.session.commit()
+        print("Base de dados populada com sucesso!")
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+        db.session.rollback()
 
 if __name__ == '__main__':
     app.run(debug=True)

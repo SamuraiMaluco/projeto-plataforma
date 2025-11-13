@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pagamento.css') }}">
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="payment-container">
+    <h2>Escolha seu Plano Anual</h2>
+    
+    <div id="payment-error" role="alert" style="color: red; margin-top: 10px; text-align: center;"></div>
+    
+    <div class="planos-grid">
+        <div class="plano-card {% if plano == 'anual_parcelado' %}destaque{% endif %}">
+            <div class="badge">Até 12x</div>
+            <h3>Plano Anual Parcelado</h3>
+            <div class="preco">R$ 570<small>,00</small></div>
+            <div class="total">ou 12x de R$ 47,50</div>
+            <ul class="beneficios">
+                <li>Acesso imediato a todos os conteúdos</li>
+                <li>Pague com Cartão, Pix ou Boleto</li>
+                <li>Renovação automática após 1 ano</li>
+                <li>Cancelamento a qualquer momento</li>
+            </ul>
+            <button id="btn-pagar-parcelado" data-plano="anual_parcelado" class="btn-plano">Assinar Agora</button>
+        </div>
+
+        <div class="plano-card {% if plano == 'anual_avista' %}destaque{% endif %}">
+            <div class="badge economize">Economize R$ 116</div>
+            <h3>Plano Anual à Vista</h3>
+            <div class="preco">R$ 456<small>,00</small></div>
+            <div class="economia">20% de desconto</div>
+            <ul class="beneficios">
+                <li>Acesso imediato a todos os conteúdos</li>
+                <li>Pague com Cartão, Pix ou Boleto</li>
+                <li>Pagamento único sem preocupações</li>
+                <li>Renovação automática após 1 ano</li>
+            </ul>
+            <button id="btn-pagar-avista" data-plano="anual_avista" class="btn-plano">Assinar Agora</button>
+        </div>
+    </div>
+
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // Pega os botões
+        const btnParcelado = document.getElementById('btn-pagar-parcelado');
+        const btnAvista = document.getElementById('btn-pagar-avista');
+        const errorDiv = document.getElementById('payment-error');
+        
+        // Função para lidar com o clique
+        async function handlePaymentClick(event) {
+            const button = event.target;
+            const plano = button.dataset.plano;
+            
+            setLoading(button, true);
+            errorDiv.textContent = ''; // Limpa erros antigos
+
+            // Pega o token CSRF do teu <head> ou de um input
+            // (Assumindo que o tens no 'base.html' como <meta name="csrf-token">)
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            try {
+                // 1. Chama o nosso backend para criar a preferência
+                const response = await fetch("{{ url_for('payments.criar_preferencia') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ plano: plano })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    showError(data.error);
+                    setLoading(button, false);
+                } else {
+                    // 2. TEMOS O URL! Redireciona o usuário para o checkout do MP
+                    window.location.href = data.init_point;
+                }
+            } catch (error) {
+                showError('Erro ao iniciar pagamento. Tente novamente.');
+                setLoading(button, false);
+            }
+        }
+        
+        // Adiciona o evento aos botões
+        if (btnParcelado) btnParcelado.addEventListener('click', handlePaymentClick);
+        if (btnAvista) btnAvista.addEventListener('click', handlePaymentClick);
+
+        // --- Funções Auxiliares ---
+        function setLoading(button, isLoading) {
+            button.disabled = isLoading;
+            button.innerText = isLoading ? 'A processar...' : 'Assinar Agora';
+        }
+
+        function showError(message) {
+            errorDiv.textContent = message;
+        }
+    });
+</script>
+{% endblock %}

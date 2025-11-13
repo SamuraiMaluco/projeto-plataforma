@@ -1,13 +1,18 @@
 # /core/__init__.py
-# A "fábrica" da aplicação. Constrói e configura a instância do Flask.
 import os
-from flask import Flask
+from flask import Flask, render_template
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
 def create_app():
-    app = Flask(__name__)
+    # --- ### A CORREÇÃO ESTÁ AQUI ### ---
+    # Nós precisamos de dizer ao Flask onde estão AMBAS as pastas,
+    # já que elas não estão no mesmo diretório que este arquivo.
+    app = Flask(__name__, 
+                template_folder='../templates',
+                static_folder='../static') # <<< ESTA LINHA É A ADIÇÃO
 
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
@@ -21,6 +26,7 @@ def create_app():
     csrf.init_app(app)
 
     # Regista todos os módulos (Blueprints)
+    from core.routes import init_core_routes
     from modules.auth.routes import init_auth_routes
     from modules.admin.routes import init_admin_routes
     from modules.content.routes import init_content_routes
@@ -28,11 +34,28 @@ def create_app():
     from modules.payments.routes import init_payments_routes
     from modules.progress.routes import init_progress_routes
 
+    init_core_routes(app)
     init_auth_routes(app)
     init_admin_routes(app)
     init_content_routes(app)
     init_exams_routes(app)
     init_payments_routes(app)
     init_progress_routes(app)
+  
+    @app.context_processor
+    def inject_now():
+        """
+        Injeta a variável 'now' (com a data/hora atual) em todos os templates
+        para ser usada no rodapé (copyright).
+        """
+        return {'now': datetime.utcnow()}
+  
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('error/404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template('error/500.html'), 500
 
     return app

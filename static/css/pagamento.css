@@ -1,3 +1,5 @@
+/* static/CSS/pagamento.css */
+
 .payment-container {
     max-width: 1000px;
     margin: 0 auto;
@@ -12,18 +14,18 @@
 }
 
 .plano-card {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--cor-borda); /* <-- USANDO A VARIÁVEL */
     border-radius: 12px;
     padding: 30px;
     position: relative;
     transition: all 0.3s ease;
-    background: white;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    background: var(--cor-fundo-card); /* <-- USANDO A VARIÁVEL */
+    box-shadow: var(--sombra-card); /* <-- USANDO A VARIÁVEL */
 }
 
 .plano-card.destaque {
-    border: 2px solid #4CAF50;
-    box-shadow: 0 5px 20px rgba(76, 175, 80, 0.15);
+    border: 2px solid var(--cor-primaria); /* <-- USANDO A VARIÁVEL (Marrom) */
+    box-shadow: 0 5px 20px rgba(109, 76, 65, 0.15); /* (Sombra marrom) */
 }
 
 .plano-card:hover {
@@ -35,7 +37,7 @@
     position: absolute;
     top: -12px;
     right: 20px;
-    background: #4CAF50;
+    background: var(--cor-primaria); /* <-- USANDO A VARIÁVEL (Marrom) */
     color: white;
     padding: 6px 20px;
     border-radius: 20px;
@@ -45,12 +47,12 @@
 }
 
 .badge.economize {
-    background: #FF9800;
+    background: var(--cor-aviso); /* <-- USANDO A VARIÁVEL (Dourado) */
 }
 
 .plano-card h3 {
     margin-top: 15px;
-    color: #333;
+    color: var(--cor-texto); /* <-- USANDO A VARIÁVEL */
     font-size: 24px;
     font-weight: 600;
 }
@@ -59,17 +61,17 @@
     font-size: 32px;
     font-weight: bold;
     margin: 20px 0 5px;
-    color: #4CAF50;
+    color: var(--cor-primaria); /* <-- USANDO A VARIÁVEL (Marrom) */
 }
 
 .total, .economia {
     font-size: 16px;
-    color: #666;
+    color: var(--cor-texto-claro); /* <-- USANDO A VARIÁVEL */
     margin-bottom: 20px;
 }
 
 .economia {
-    color: #FF9800;
+    color: var(--cor-aviso); /* <-- USANDO A VARIÁVEL (Dourado) */
     font-weight: 500;
 }
 
@@ -88,7 +90,7 @@
 
 .beneficios li:before {
     content: "✓";
-    color: #4CAF50;
+    color: var(--cor-primaria); /* <-- USANDO A VARIÁVEL (Marrom) */
     position: absolute;
     left: 0;
     font-weight: bold;
@@ -98,7 +100,7 @@
 .btn-plano {
     width: 100%;
     padding: 14px;
-    background: #4CAF50;
+    background: var(--cor-primaria); /* <-- USANDO A VARIÁVEL (Marrom) */
     color: white;
     border: none;
     border-radius: 6px;
@@ -109,82 +111,27 @@
 }
 
 .btn-plano:hover {
-    background: #3e8e41;
+    background: var(--cor-primaria-dark); /* <-- USANDO A VARIÁVEL */
 }
 
 .payment-card {
-    background: white;
+    background: var(--cor-fundo-card); /* <-- USANDO A VARIÁVEL */
     border-radius: 12px;
     padding: 35px;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    box-shadow: var(--sombra-card); /* <-- USANDO A VARIÁVEL */
     margin-top: 40px;
 }
 
-.form-group {
-    margin-bottom: 25px;
-}
-
-.form-row {
-    display: flex;
-    gap: 20px;
-}
-
-.form-row .form-group {
-    flex: 1;
-}
-
-.card-input {
-    border: 1px solid #ddd;
-    padding: 12px 15px;
-    border-radius: 6px;
-    height: 46px;
-    display: flex;
-    align-items: center;
-    background: #f9f9f9;
-}
+/* ... (o resto do pagamento.css) ... */
 
 .btn-payment {
-    background: #4CAF50;
+    background: var(--cor-primaria); /* <-- USANDO A VARIÁVEL (Marrom) */
     color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 6px;
-    font-size: 17px;
-    font-weight: 500;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.3s;
-    margin-top: 10px;
+    /* ... */
 }
 
 .btn-payment:hover {
-    background: #3e8e41;
+    background: var(--cor-primaria-dark); /* <-- USANDO A VARIÁVEL */
 }
 
-.payment-security {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 25px;
-    color: #666;
-    font-size: 14px;
-}
-
-.payment-security img {
-    height: 25px;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .planos-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-}
-</style>
-
+/* ... (O resto do seu pagamento.css) ... */

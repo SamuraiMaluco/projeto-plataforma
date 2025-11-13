@@ -1,104 +1,97 @@
+/* static/CSS/login.css */
 
-header{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    text-align: center;
-    z-index: 1000;
-    /*ajuste de fonte*/
-    font-family: 'Poppins', 'Montserrat', 'sans-serif';
-    font-size: 2.5rem;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: capitalize;
-    /*ajuste de ícone*/
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-.fa-solid fa-scale-balanced {
-    font-size: 2rem;
-    color: rgb(245, 243, 151);
-    margin-right: 10px;
-    margin-top: 7px;
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  z-index: 1000;
+  /*ajuste de fonte*/
+  font-family: 'Poppins', 'Montserrat', 'sans-serif';
+  font-size: 2.5rem;
+  color: var(--cor-texto); /* <-- USANDO A VARIÁVEL */
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: capitalize;
+  /*ajuste de ícone*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-#mensagem{
-    color: red;
-    font-size: 30px;
-    border-radius: 30px;
-    font-weight: bold;
-    margin-bottom: 40px;
-    
+.fa-solid.fa-scale-balanced { /* (Corrigido o seletor) */
+  font-size: 2rem;
+  color: var(--cor-aviso); /* <-- USANDO A VARIÁVEL (Dourado) */
+  margin-right: 10px;
+  margin-top: 7px;
 }
 
-
+#mensagem {
+  color: var(--cor-erro); /* <-- USANDO A VARIÁVEL */
+  font-size: 30px;
+  border-radius: 30px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
 
 body {
-     /*ajuste geral  */
-    font-family: Arial, sans-serif;
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    /* cor de fundo */
-    background-image: linear-gradient(180deg, #ffffff, #7895aa, #4e8196);
-    margin: 0%;
-    padding: 0;
-    min-height: 100vh;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
-    
-    
-}
-.ficha{
-    background-color: #579baa;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    
-    
+  /*ajuste geral  */
+  font-family: Arial, sans-serif;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  /* cor de fundo */
+  /* Substituído o 'linear-gradient' azul por um bege sólido */
+  background-color: var(--cor-fundo);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
-.ficha input{
-    background-color: ;
-    color: #5e5b5b;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+.ficha {
+  background-color: var(--cor-fundo-card); /* <-- USANDO A VARIÁVEL */
+  box-shadow: var(--sombra-card); /* <-- USANDO A VARIÁVEL */
+  border-radius: var(--borda-radius); /* <-- USANDO A VARIÁVEL */
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
-.meu-botao{
-    background-color: #2f66cc;
-    color: rgb(255, 255, 255);
-    border-radius: 25px;
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 14px;
-    border: none;
-    box-shadow: 0px 4px 6px rgb(6, 9, 12);
-    font-family: 'Times New Roman', Times, serif;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 120px;
-    height: 40px;
-    
-
+.ficha input {
+  background-color: #fff; /* (Input sempre branco) */
+  color: var(--cor-texto-claro); /* <-- USANDO A VARIÁVEL */
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--cor-borda); /* <-- USANDO A VARIÁVEL */
+  border-radius: 5px;
+  box-sizing: border-box;
 }
-.meubotao:hover {
-    background-color: black;
-    
+
+.meu-botao {
+  background-color: var(--cor-primaria); /* <-- USANDO A VARIÁVEL */
+  color: white;
+  border-radius: 25px;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* (Sombra suavizada) */
+  font-family: 'Times New Roman', Times, serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 120px;
+  height: 40px;
+}
+.meu-botao:hover { /* (Corrigido 'meubotao' para '.meu-botao') */
+  background-color: var(--cor-primaria-dark); /* <-- USANDO A VARIÁVEL */
 }

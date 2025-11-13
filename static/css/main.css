@@ -1,0 +1,26 @@
+/* static/css/main.css */
+
+/* Este arquivo "importa" todos os seus outros arquivos CSS.
+  A ORDEM é importante (do mais geral para o mais específico).
+*/
+
+/* 1. Importar Variáveis e CSS Base (Reset, Sidebar, Layout) */
+@import url('base/transitions.css');
+@import url('base/_variable.css'); /* (Carregando suas variáveis, embora base.css pareça ser o principal) */
+@import url('base.css'); /* <-- É AQUI que vamos definir a paleta no Passo 2 */
+
+/* 2. Importar Layouts Específicos */
+@import url('layouts/_admin.css');
+@import url('layouts/_auth.css');
+
+/* 3. Importar Componentes */
+@import url('components/_cards.css');
+
+/* 4. Importar Páginas Específicas (que vão USAR as variáveis) */
+@import url('home.css');
+@import url('login.css');
+@import url('cadastro.css');
+@import url('aulas.css');
+@import url('content.css');
+@import url('watch.css');
+@import url('pagamento.css');

@@ -10,13 +10,7 @@ bp = Blueprint('progress', __name__, url_prefix='/progress')
 def complete_lesson(lesson_id):
     try:
         lesson_progress, subject_progress = ProgressService.complete_lesson(current_user.id, lesson_id)
-        return jsonify({
-            'status': 'success',
-            'data': {
-                'lesson': {'completed': lesson_progress.is_completed},
-                'subject': {'progress': subject_progress.progress_percentage}
-            }
-        })
+        return jsonify({'status': 'success'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 400
 

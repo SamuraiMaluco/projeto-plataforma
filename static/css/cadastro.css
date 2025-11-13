@@ -1,45 +1,41 @@
+/* static/CSS/cadastro.css */
 
-
-
-
-
-
-.novo{
-    background-color: rgb(126, 208, 233);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    
-    
+.novo {
+  background-color: var(--cor-fundo-card); /* <-- USANDO A VARIÁVEL */
+  box-shadow: var(--sombra-card); /* <-- USANDO A VARIÁVEL */
+  border-radius: var(--borda-radius); /* <-- USANDO A VARIÁVEL */
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
-.novo input{
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+.novo input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--cor-borda); /* <-- USANDO A VARIÁVEL */
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
-.meu-botao{
-    background-color: #3a6ac4;
-    color: rgba(253, 253, 253, 0.993);
-    border-radius: 25px;
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 14px;
-    border: none;
-    box-shadow: 0px 4px 6px rgb(53, 123, 230);
-    font-family: 'Times New Roman', Times, serif;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 120px;
-    height: 40px;
-    
+.meu-botao {
+  background-color: var(--cor-primaria); /* <-- USANDO A VARIÁVEL */
+  color: white;
+  border-radius: 25px;
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* (Sombra suavizada) */
+  font-family: 'Times New Roman', Times, serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 120px;
+  height: 40px;
+}
 
+.meu-botao:hover {
+  background-color: var(--cor-primaria-dark); /* <-- USANDO A VARIÁVEL */
 }

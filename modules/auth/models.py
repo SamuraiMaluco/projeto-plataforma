@@ -1,9 +1,10 @@
-# /modules/auth/models.py
+
 
 # A linha mais importante é esta, que importa o objeto db
 from core.extensions import db 
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -18,7 +19,13 @@ class User(db.Model, UserMixin):
     payments = db.relationship('Payment', back_populates='user', lazy='dynamic')
     lesson_progress = db.relationship('LessonProgress', back_populates='user', lazy='dynamic')
     subject_progress = db.relationship('SubjectProgress', back_populates='user', lazy='dynamic')
-
+    assinatura_valida_ate = db.Column(db.DateTime, nullable=True)
+    
+    #outros modulos relacionados
+    exam_attempts = db.relationship('ExamAttempt', back_populates='user', lazy='dynamic')
+    
+    
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
