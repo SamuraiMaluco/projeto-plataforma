@@ -93,9 +93,10 @@ body {
   padding: 20px;
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Garante espaço entre logo e botão */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  height: 70px; /* Altura fixa para alinhar */
 }
-
 .sidebar-header .logo {
   width: 30px;
   height: 30px;
@@ -159,7 +160,7 @@ body {
 }
 
 .toggle-sidebar {
-  position: absolute;
+
   right: -15px;
   top: 20px;
   background: white;
@@ -228,4 +229,22 @@ body {
 /* Content Section */
 .content-section {
   padding: 25px;
+}
+
+.main-footer {
+    margin-top: auto; /* Empurra o rodapé para o fundo */
+    padding: 20px;
+    text-align: center;
+    color: var(--cor-texto-claro);
+    border-top: 1px solid var(--cor-borda);
+    background-color: var(--cor-fundo);
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    transition: var(--transicao);
+    display: flex;
+    flex-direction: column; /* Para o footer funcionar */
+    min-height: 100vh;
 }

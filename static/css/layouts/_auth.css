@@ -1,26 +1,137 @@
-.auth-page {
-    display: flex;
-    min-height: 100vh;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    padding: 2rem;
+/* static/CSS/layouts/_auth.css */
+
+/* ESTA É A MUDANÇA PRINCIPAL:
+  Removemos o estilo do '.auth-page' (que mexia no body).
+  Agora, estilizamos o '.auth-container' (que vive DENTRO do .main-content)
+  para ser flexível e centralizar o card.
+*/
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 80vh; /* Altura mínima para centralizar verticalmente */
+  padding: var(--spacing-lg);
 }
 
 .auth-card {
-    background: white;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    width: 100%;
-    max-width: 400px;
-    margin: auto;
-    overflow: hidden;
+  background: var(--cor-fundo-card); /* (Branco) */
+  border-radius: var(--borda-radius);
+  box-shadow: var(--sombra-card);
+  width: 100%;
+  max-width: 420px; /* (Um pouco maior) */
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda);
 }
 
 .auth-card__header {
-    padding: 2rem;
-    text-align: center;
-    background: var(--color-light);
+  padding: 2rem;
+  text-align: center;
+  background: var(--cor-fundo); /* (Bege claro) */
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.auth-card__header i {
+  font-size: 2.5rem;
+  color: var(--cor-primaria); /* (Marrom) */
+  margin-bottom: 1rem;
+}
+
+.auth-card__header h1 {
+  color: var(--cor-texto); /* (Marrom escuro) */
+  margin: 0;
+}
+
+.auth-card__header p {
+  color: var(--cor-texto-claro); /* (Marrom claro) */
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .auth-form {
-    padding: 2rem;
+  padding: 2rem;
+}
+
+/* Estilos de Formulário (vindos do seu login.css e cadastro.css) */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 5px; /* (Reduzido) */
+  border: 1px solid var(--cor-borda);
+  border-radius: 5px;
+  box-sizing: border-box;
+  background: #fff;
+  color: var(--cor-texto);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--cor-primaria); /* (Marrom) */
+  box-shadow: 0 0 5px rgba(109, 76, 65, 0.3); /* (Sombra marrom) */
+}
+
+.form-actions {
+  text-align: right;
+  font-size: 0.85rem;
+}
+.form-actions a {
+  color: var(--cor-primaria);
+  text-decoration: none;
+}
+.form-actions a:hover {
+  text-decoration: underline;
+}
+
+/* Botão Principal */
+.btn-primary {
+  background-color: var(--cor-primaria);
+  color: white;
+  border-radius: 5px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background-color: var(--cor-primaria-dark);
+  transform: translateY(-2px);
+}
+
+.auth-card__footer {
+  padding: 1.5rem 2rem;
+  text-align: center;
+  background: var(--cor-fundo); /* (Bege claro) */
+  border-top: 1px solid var(--cor-borda);
+  font-size: 0.9rem;
+}
+
+.auth-card__footer a {
+  color: var(--cor-primaria);
+  font-weight: 600;
+  text-decoration: none;
+}
+.auth-card__footer a:hover {
+  text-decoration: underline;
 }

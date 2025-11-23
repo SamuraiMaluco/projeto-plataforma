@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block tittle %}Papirada {% endblock %}</title>
+    <title>{% block tittle %}StudyDB{% endblock %}</title>
+    
     <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     
@@ -21,9 +23,9 @@
     {% endif %}
 
     <aside class="sidebar">
-        <div class="sidebar__header">
-            <h2 class="sidebar__logo">StudyDB</h2>
-            <button class="sidebar__toggle" aria-label="Toggle sidebar">
+        <div class="sidebar-header"> <h2 class="sidebar__logo">StudyDB</h2>
+            
+            <button class="toggle-sidebar" aria-label="Toggle sidebar">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
@@ -39,7 +41,7 @@
                 
                 {% if current_user.is_authenticated %}
                 <li class="{% if 'content' in request.endpoint %}active{% endif %}">
-                    <a href="{{ url_for('content.list_lessons') }}">
+                    <a href="{{ url_for('content.list_subjects') }}">
                         <i class="fas fa-book-open"></i>
                         <span>Aulas</span>
                     </a>
@@ -50,6 +52,7 @@
     </aside>
 
     <main class="main-content">
+        
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             <div class="flash-messages">
@@ -64,28 +67,27 @@
         {% endwith %}
         
         {% block content %}{% endblock %}
-    </main>
 
-    <footer class="main-footer">
-        <div class="container">
-            <p>&copy; {{ now.year }} Study Platform</p>
-            {% if current_user.is_authenticated %}
-            <div class="subscription-status">
-                {% if current_user.subscription.active %}
-                <span class="badge badge-success">
-                    <i class="fas fa-check-circle"></i> Assinante
-                </span>
-                {% else %}
-                <a href="{{ url_for('payments.index') }}" class="badge badge-warning">
-                    <i class="fas fa-exclamation-circle"></i> Assinar
-                </a>
+        <footer class="main-footer">
+            <div class="container">
+                <p>&copy; {{ now.year }} Study Platform</p>
+                {% if current_user.is_authenticated %}
+                <div class="subscription-status">
+                    {% if current_user.assinatura_valida_ate and current_user.assinatura_valida_ate > now %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-check-circle"></i> Assinante
+                    </span>
+                    {% else %}
+                    <a href="{{ url_for('payments.index') }}" class="badge badge-warning">
+                        <i class="fas fa-exclamation-circle"></i> Assinar
+                    </a>
+                    {% endif %}
+                </div>
                 {% endif %}
             </div>
-            {% endif %}
-        </div>
-    </footer>
-
-    <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+        </footer>
+    
+    </main> <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
     {% block scripts %}{% endblock %}
     
 </body>

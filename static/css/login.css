@@ -94,4 +94,4 @@ body {
 }
 .meu-botao:hover { /* (Corrigido 'meubotao' para '.meu-botao') */
   background-color: var(--cor-primaria-dark); /* <-- USANDO A VARIÁVEL */
-}
+} 

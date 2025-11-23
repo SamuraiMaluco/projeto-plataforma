@@ -1,14 +1,13 @@
 # /core/routes.py
 from flask import Blueprint, render_template, session, redirect, url_for
 from flask_login import current_user
-from datetime import datetime # <<< Corrigido para utcnow
+from datetime import datetime, timedelta # Importa datetime E timedelta
 from modules.auth.models import User
+from modules.progress.services import ProgressService # Importa o ProgressService
 
 bp = Blueprint('core', __name__)
 
-# --- ROTA DUPLICADA REMOVIDA ---
-# A rota @bp.route('/login') foi removida.
-# A rota correta 'auth.login' já existe em modules/auth/routes.py
+# A rota /login duplicada foi removida daqui. Ela está em modules/auth/routes.py.
 
 @bp.route('/')
 def home():
@@ -21,22 +20,48 @@ def home():
     else:
         mensagem = 'Bem-vindo de volta'
         
-    # Usando utcnow() para ser consistente com o webhook do MP
+    # Usando utcnow() para ser consistente com o webhook
     assinatura_ativa = current_user.assinatura_valida_ate and current_user.assinatura_valida_ate > datetime.utcnow()
     
-    # --- CORREÇÃO DE CAMINHO DO TEMPLATE ---
+    # --- LÓGICA DE DADOS PARA O DASHBOARD ---
+    
+    # 1. Busca o progresso real do usuário
+    progress_data = ProgressService.get_user_progress_summary(current_user.id)
+    
+    # 2. Cria dados FALSOS (dummy) para 'recent_activities'
+    #    (Já que não temos essa lógica, mas o template home.html precisa)
+    recent_activities_dummy = [
+        {
+            'icon': 'play-circle', 
+            'title': 'Você começou a aula "Introdução"', 
+            'timestamp': datetime.utcnow() - timedelta(minutes=10), 
+            'status': 'success', 
+            'status_label': 'Iniciado'
+        },
+        {
+            'icon': 'check-circle', 
+            'title': 'Você completou "Estruturas de Dados"', 
+            'timestamp': datetime.utcnow() - timedelta(hours=2), 
+            'status': 'primary', 
+            'status_label': 'Concluído'
+        }
+    ]
+    # --- FIM DA LÓGICA DE DADOS ---
+    
     # Corrigido de 'core/home.html' para 'home.html'
     return render_template('home.html',
                          email=current_user.email,
                          username=current_user.username,
                          mensagem=mensagem,
-                         assinatura=assinatura_ativa)
+                         assinatura=assinatura_ativa,
+                         progress=progress_data, # Envia o progresso
+                         recent_activities=recent_activities_dummy) # Envia as atividades
 
 @bp.route('/sobre')
 def sobre():
-    return render_template('core/sobre.html') # (Este template não foi enviado, mas mantive a rota)
+    # Esta é a função que eu apaguei sem querer
+    return render_template('core/sobre.html') # (Assumindo que este template exista ou será criado)
 
-# --- FUNÇÃO ADICIONADA ---
-# Adicionamos a função init para seguir o padrão do projeto
 def init_core_routes(app):
+    # Esta é a outra função que eu apaguei
     app.register_blueprint(bp)

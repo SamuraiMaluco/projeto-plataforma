@@ -18,8 +18,6 @@
 
 /* 4. Importar Páginas Específicas (que vão USAR as variáveis) */
 @import url('home.css');
-@import url('login.css');
-@import url('cadastro.css');
 @import url('aulas.css');
 @import url('content.css');
 @import url('watch.css');

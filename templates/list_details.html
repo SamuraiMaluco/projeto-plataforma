@@ -5,16 +5,13 @@
 
 {% block content %}
 <div class="lesson-detail-container">
-    <!-- Cabeçalho com Breadcrumb -->
     <nav class="lesson-breadcrumb">
         <a href="{{ url_for('content.list_lessons') }}">Aulas</a> >
         <a href="{{ url_for('content.subject', subject_id=lesson.subject.id) }}">{{ lesson.subject.name }}</a> >
         <span>{{ lesson.title }}</span>
     </nav>
 
-    <!-- Conteúdo Principal -->
     <div class="lesson-content">
-        <!-- Player de Mídia -->
         {% if lesson.type == 'video' %}
         <div class="lesson-player">
             <video controls poster="{{ lesson.thumbnail_url }}">
@@ -29,19 +26,17 @@
         </div>
         {% endif %}
 
-        <!-- Conteúdo em Texto -->
         <div class="lesson-text">
             <h1>{{ lesson.title }}</h1>
             {{ lesson.content|safe }}
         </div>
     </div>
 
-    <!-- Controles de Progresso -->
     <div class="lesson-actions">
         <button class="btn btn-primary mark-as-completed"
                 data-lesson-id="{{ lesson.id }}"
-                id="completeLessonBtn">
-            <i class="fas fa-check-circle"></i>
+                id="completeLessonBtn"
+                {% if lesson.completed %}disabled{% endif %}> <i class="fas fa-check-circle"></i>
             {{ 'Aula Concluída' if lesson.completed else 'Marcar como Concluída' }}
         </button>
         
@@ -66,26 +61,46 @@
 
 {% block scripts %}
 <script type="module">
-const lessonService = new LessonService();
+    // 1. Importa o nosso serviço de API
+    import { ApiService } from "{{ url_for('static', filename='js/services/api.services.js') }}";
+
+    // 2. Instancia o serviço
+    const apiService = new ApiService();
+    
+    // 3. Pega o botão
     const completeBtn = document.getElementById('completeLessonBtn');
     
     if (completeBtn) {
         completeBtn.addEventListener('click', async () => {
             const lessonId = completeBtn.dataset.lessonId;
+            
+            // Desativa o botão para evitar clique duplo
+            completeBtn.disabled = true;
+            completeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
             try {
-                const result = await lessonService.toggleComplete(lessonId);
-                if (result.completed) {
+                // 4. Chama o método da API (que chama o backend)
+                const result = await apiService.completeLesson(lessonId);
+                
+                if (result.status === 'success') {
+                    // 5. Sucesso! Atualiza o botão
                     completeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Aula Concluída';
                     completeBtn.classList.add('completed');
+                    // (Não precisamos mais re-ativar, pois a aula está completa)
+                } else {
+                    // 6. Trata o erro (se o backend retornar um erro)
+                    alert(result.message || 'Não foi possível salvar o progresso.');
+                    completeBtn.disabled = false; // Re-ativa se falhou
+                    completeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Tentar Novamente';
                 }
             } catch (error) {
-                console.error('Error:', error);
+                // 7. Trata erro de rede (ex: servidor caiu)
+                console.error('Erro ao completar lição:', error);
+                alert('Erro de conexão. Tente novamente.');
+                completeBtn.disabled = false;
+                completeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Tentar Novamente';
             }
         });
     }
-;
-
-
-
 </script>
 {% endblock %}
