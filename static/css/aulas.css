@@ -1,353 +1,145 @@
+/* static/CSS/aulas.css */
 
-/* Estilo para foco visível */
-[role="button"]:focus, 
-button:focus {
-  outline: 2px solid var(--color-secondary);
-  outline-offset: 2px;
+/* Container da Página de Aulas */
+.lessons-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-
-.page-header {
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid var(--cor-borda);
+/* Filtros (Barra Superior) */
+.lessons-filters {
+    background-color: var(--cor-fundo-card);
+    padding: 20px;
+    border-radius: var(--borda-radius);
+    box-shadow: var(--sombra-card);
+    margin-bottom: 30px;
+    border: 1px solid var(--cor-borda);
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.page-header h1 {
-  color: var(--cor-primaria);
-  font-size: 1.8rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 5px;
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.page-header h1 i {
-  color: var(--cor-secundaria);
+.filter-group label {
+    font-weight: 600;
+    color: var(--cor-texto);
 }
 
-.page-description {
-  color: var(--cor-texto-claro);
-  font-size: 0.95rem;
+.form-select {
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    background-color: #fff;
+    color: var(--cor-texto);
+    font-size: 1rem;
 }
 
-/* Grid de Matérias */
-.materias-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+/* Grid de Aulas (Onde estava o problema das imagens gigantes) */
+.lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
 }
 
-/* Cartão de Matéria */
-.materia-card {
-  background: var(--cor-fundo-card);
-  border-radius: var(--borda-radius);
-  box-shadow: var(--sombra-card);
-  overflow: hidden;
-  transition: var(--transicao);
-  border: 1px solid var(--cor-borda);
-  margin-bottom: 20px;
+/* Card da Aula */
+.lesson-card {
+    background-color: var(--cor-fundo-card);
+    border-radius: var(--borda-radius);
+    overflow: hidden; /* Importante para a imagem não sair pelas bordas */
+    box-shadow: var(--sombra-card);
+    text-decoration: none; /* Remove sublinhado do link */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
 }
 
-.materia-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.lesson-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(109, 76, 65, 0.15);
+    border-color: var(--cor-primaria);
 }
 
-/* Cabeçalho da Matéria */
-.materia-header {
-  background: var(--cor-primaria);
-  color: white;
-  padding: 15px 20px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: var(--transicao);
-  user-select: none;
+/* Área da Mídia (Imagem/Ícone) */
+.lesson-card__media {
+    position: relative;
+    width: 100%;
+    height: 160px; /* Altura fixa para uniformizar */
+    background-color: var(--cor-secundaria); /* Fundo caso não tenha imagem */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Toggle das Aulas - Correção */
-.materia-header .toggle-icon i {
-  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+.lesson-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Faz a imagem cobrir a área sem distorcer */
 }
 
-.materia-header .toggle-icon.rotated i {
-  transform: rotate(180deg);
+.lesson-card__media i {
+    font-size: 3rem;
+    color: white;
+    z-index: 2;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    position: absolute; /* Centraliza o ícone sobre a imagem */
 }
 
-.materia-header:hover {
-  background: #34495e;
+/* Corpo do Card */
+.lesson-card__body {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-.materia-icon {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.lesson-card__body h3 {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: var(--cor-texto);
+    line-height: 1.4;
 }
 
-.materia-icon i {
-  font-size: 1.3rem;
-  color: var(--cor-secundaria);
+.lesson-meta {
+    margin-top: auto; /* Empurra para o fundo */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--cor-texto-claro);
 }
 
-.materia-header h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 500;
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: var(--cor-fundo);
+    border: 1px solid var(--cor-borda);
+    font-weight: 600;
 }
 
-.toggle-icon i {
-  transition: transform 0.3s ease;
-  font-size: 0.9rem;
+/* Barra de Progresso no Card (Opcional) */
+.progress {
+    height: 4px;
+    background-color: var(--cor-borda);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
 }
 
-.toggle-icon.rotated i {
-  transform: rotate(180deg);
-}
-
-/* Conteúdo dos Capítulos */
-.capitulos-box {
-  background: var(--cor-fundo);
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s var(--transition);
-  transition: all 0.3s ease-out;
-  display: none;
-}
-
-
-.capitulos-box.show {
-  max-height: 2000px;
-  padding: 15px 20px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.capitulos-list {
-  padding: 0;
-  margin: 0;
-}
-
-.capitulos-list li {
-  padding: 10px 0;
-  border-bottom: 1px solid var(--cor-borda);
-  list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--cor-texto);
-  transition: var(--transicao);
-  font-size: 0.95rem;
-}
-
-.capitulos-list li:last-child {
-  border-bottom: none;
-}
-
-.capitulos-list li:hover {
-  color: var(--cor-secundaria);
-}
-
-.capitulos-list i {
-  color: var(--cor-terciaria);
-  font-size: 0.8rem;
+.progress-bar {
+    height: 100%;
+    background-color: var(--cor-sucesso);
 }
 
 /* Responsividade */
-@media (max-width: 992px) {
-  .materias-grid {
-      grid-template-columns: 1fr;
-  }
-  
-  .sidebar {
-      transform: translateX(-100%);
-  }
-  
-  .sidebar.show {
-      transform: translateX(0);
-  }
-  
-  .main-content {
-      margin-left: 0;
-  }
-  
-  .topbar .toggle-sidebar {
-      display: block;
-  }
-}
-
-@media (max-width: 576px) {
-  .content-section {
-      padding: 15px;
-  }
-  
-  .page-header h1 {
-      font-size: 1.5rem;
-  }
-  
-  .materia-header {
-      padding: 12px 15px;
-  }
-  
-  .materia-icon i {
-      font-size: 1.1rem;
-  }
-  
-  .materia-header h2 {
-      font-size: 1.1rem;
-  }
-}
-/* Transições suaves */
-.capitulos-box {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: 
-      max-height 0.3s ease-out,
-      opacity 0.2s ease,
-      transform 0.2s ease;
-}
-
-.capitulos-box.show {
-  max-height: 2000px; /* Ajuste conforme necessário */
-  opacity: 1;
-  transform: translateY(0);
-  padding: 15px;
-}
-
-/* Ícones de toggle */
-.toggle-icon i {
-  transition: transform 0.2s ease;
-}
-
-/* Efeito visual para o cabeçalho */
-.materia-header {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.materia-header:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-/* Acessibilidade - foco visível */
-.materia-header:focus {
-  outline: 2px solid #3498db;
-  outline-offset: 2px;
-}
-/* Transições e animações */
-.capitulos-box {
-  display: none;
-  height: 0;
-  overflow: hidden;
-  transition: height 0.3s ease;
-}
-
-.capitulos-box.show {
-  display: block;
-}
-
-/* Ícones de toggle */
-.toggle-icon i {
-  transition: transform 0.2s ease;
-}
-
-.materia-header:hover .toggle-icon i {
-  transform: scale(1.1);
-}
-
-/* Efeito visual para feedback */
-.materia-header {
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-  user-select: none;
-}
-
-.materia-header:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-/*assinaturas*/
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.7);
-}
-
-.modal-content {
-  background-color: #fff;
-  margin: 5% auto;
-  padding: 25px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 600px;
-  position: relative;
-}
-
-.close-modal {
-  position: absolute;
-  right: 20px;
-  top: 15px;
-  font-size: 28px;
-  cursor: pointer;
-}
-
-.planos-container {
-  display: flex;
-  gap: 20px;
-  margin: 25px 0;
-}
-
-.plano-card {
-  flex: 1;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.plano-card:hover {
-  border-color: #3498db;
-}
-
-.plano-card.selecionado {
-  border: 2px solid #3498db;
-  background-color: #f8fafc;
-}
-
-.preco {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 10px 0;
-  color: #2c3e50;
-}
-
-.preco span {
-  font-size: 0.9rem;
-  color: #27ae60;
-}
-
-.btn-pagamento {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  width: 100%;
-}
-
-.btn-pagamento:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
+@media (max-width: 768px) {
+    .lessons-grid {
+        grid-template-columns: 1fr; /* Uma coluna no mobile */
+    }
 }

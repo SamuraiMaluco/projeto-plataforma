@@ -6,8 +6,12 @@
 {% block content %}
 <div class="lesson-detail-container">
     <nav class="lesson-breadcrumb">
-        <a href="{{ url_for('content.list_lessons') }}">Aulas</a> >
-        <a href="{{ url_for('content.subject', subject_id=lesson.subject.id) }}">{{ lesson.subject.name }}</a> >
+        <a href="{{ url_for('content.list_subjects') }}">Aulas</a> >
+        
+        <a href="{{ url_for('content.view_subject', subject_id=lesson.content.subject.id) }}">
+            {{ lesson.content.subject.name }}
+        </a> >
+        
         <span>{{ lesson.title }}</span>
     </nav>
 
@@ -16,6 +20,7 @@
         <div class="lesson-player">
             <video controls poster="{{ lesson.thumbnail_url }}">
                 <source src="{{ lesson.media_url }}" type="video/mp4">
+                Seu navegador não suporta o elemento de vídeo.
             </video>
         </div>
         {% elif lesson.type == 'audio' %}
@@ -28,7 +33,7 @@
 
         <div class="lesson-text">
             <h1>{{ lesson.title }}</h1>
-            {{ lesson.content|safe }}
+            {{ lesson.content_text|safe }}
         </div>
     </div>
 
@@ -36,7 +41,8 @@
         <button class="btn btn-primary mark-as-completed"
                 data-lesson-id="{{ lesson.id }}"
                 id="completeLessonBtn"
-                {% if lesson.completed %}disabled{% endif %}> <i class="fas fa-check-circle"></i>
+                {% if lesson.completed %}disabled{% endif %}>
+            <i class="fas fa-check-circle"></i>
             {{ 'Aula Concluída' if lesson.completed else 'Marcar como Concluída' }}
         </button>
         
@@ -61,42 +67,29 @@
 
 {% block scripts %}
 <script type="module">
-    // 1. Importa o nosso serviço de API
     import { ApiService } from "{{ url_for('static', filename='js/services/api.services.js') }}";
 
-    // 2. Instancia o serviço
     const apiService = new ApiService();
-    
-    // 3. Pega o botão
     const completeBtn = document.getElementById('completeLessonBtn');
     
     if (completeBtn) {
         completeBtn.addEventListener('click', async () => {
             const lessonId = completeBtn.dataset.lessonId;
-            
-            // Desativa o botão para evitar clique duplo
             completeBtn.disabled = true;
             completeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
 
             try {
-                // 4. Chama o método da API (que chama o backend)
                 const result = await apiService.completeLesson(lessonId);
-                
                 if (result.status === 'success') {
-                    // 5. Sucesso! Atualiza o botão
                     completeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Aula Concluída';
                     completeBtn.classList.add('completed');
-                    // (Não precisamos mais re-ativar, pois a aula está completa)
                 } else {
-                    // 6. Trata o erro (se o backend retornar um erro)
-                    alert(result.message || 'Não foi possível salvar o progresso.');
-                    completeBtn.disabled = false; // Re-ativa se falhou
+                    alert(result.message || 'Erro ao salvar.');
+                    completeBtn.disabled = false;
                     completeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Tentar Novamente';
                 }
             } catch (error) {
-                // 7. Trata erro de rede (ex: servidor caiu)
-                console.error('Erro ao completar lição:', error);
-                alert('Erro de conexão. Tente novamente.');
+                console.error('Erro:', error);
                 completeBtn.disabled = false;
                 completeBtn.innerHTML = '<i class="fas fa-check-circle"></i> Tentar Novamente';
             }
