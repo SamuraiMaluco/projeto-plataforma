@@ -1,60 +1,30 @@
 /* static/CSS/base.css */
 
 :root {
-  /* ================================== */
-  /* === 1. A NOSSA PALETA (O CHEFE) === */
-  /* ================================== */
+  /* === 1. A NOSSA PALETA === */
+  --cor-primaria: #6D4C41;
+  --cor-primaria-dark: #4E342E;
+  --cor-secundaria: #A1887F;
+  --cor-texto: #3E2723;
+  --cor-texto-claro: #8D6E63;
+  --cor-fundo: #F9F6F1;
+  --cor-fundo-card: #FFFFFF;
+  --cor-sucesso: #2E7D32;
+  --cor-aviso: #E6A843;
+  --cor-erro: #C62828;
+  --cor-info: #546E7A;
   
-  /* Cores Principais (Marrom e Bege) */
-  --cor-primaria: #6D4C41;     /* Marrom escuro (para botões, headers, sidebar) */
-  --cor-primaria-dark: #4E342E; /* Marrom mais escuro (para hover) */
-  --cor-secundaria: #A1887F;   /* Marrom/Bege claro (para apoio, ícones) */
-  --cor-texto: #3E2723;       /* Texto (Marrom super escuro) */
-  --cor-texto-claro: #8D6E63;  /* Texto claro (links visitados, placeholders) */
-  
-  /* Cores de Fundo */
-  --cor-fundo: #F9F6F1;       /* Fundo da página (Bege bem claro) */
-  --cor-fundo-card: #FFFFFF;  /* Cards em branco puro para contraste */
-  
-  /* Cores de Feedback (para flash messages, etc.) */
-  --cor-sucesso: #2E7D32;     /* Verde escuro (combina com marrom) */
-  --cor-aviso: #E6A843;      /* Dourado/Amarelo (para "Assinar") */
-  --cor-erro: #C62828;       /* Vermelho escuro */
-  --cor-info: #546E7A;       /* Cinza azulado (para "info") */
-  
-  /* ================================== */
   /* === 2. VARIÁVEIS DE LAYOUT === */
-  /* ================================== */
-  /* (Vindas do seu arquivo base/_variable.css) */
-
-  /* Espaçamentos */
   --spacing-unit: 1rem;
-  --spacing-sm: calc(var(--spacing-unit) * 0.5);
-  --spacing-md: var(--spacing-unit);
-  --spacing-lg: calc(var(--spacing-unit) * 1.5);
-
-  /* Bordas */
-  --borda-radius: 8px; /* (Você usou 0.35rem, 8px é mais comum) */
-  --cor-borda: #D7CCC8; /* Borda em tom de bege/marrom */
-
-  /* Sombras */
+  --borda-radius: 8px;
+  --cor-borda: #D7CCC8;
   --sombra: 0 4px 6px rgba(0, 0, 0, 0.1);
   --sombra-card: 0 2px 10px rgba(0, 0, 0, 0.08);
-
-  /* Transições */
   --transicao: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* ================================== */
-/* === 3. ESTILOS GERAIS (RESET) === */
-/* ================================== */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+/* === 3. ESTILOS GERAIS === */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
 body {
   background-color: var(--cor-fundo);
@@ -63,176 +33,159 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar */
+/* === SIDEBAR (Melhorada com Flexbox) === */
 .sidebar {
   width: 250px;
-  background: var(--cor-primaria); /* <-- USANDO A VARIÁVEL */
+  background: var(--cor-primaria);
   color: white;
-  transition: var(--transicao);
+  transition: width 0.3s ease; /* Animação suave da largura */
   height: 100vh;
   position: fixed;
   z-index: 100;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column; /* Organiza itens verticalmente */
+  overflow: hidden; /* Esconde texto que "sobra" ao recolher */
 }
 
 .sidebar.collapsed {
   width: 70px;
 }
 
-.sidebar.collapsed .sidebar-header h3,
-.sidebar.collapsed .sidebar-nav span {
-  display: none;
-}
-
-.sidebar.collapsed .sidebar-nav i {
-  font-size: 1.2rem;
-  margin-right: 0;
-}
-
+/* Cabeçalho da Sidebar */
 .sidebar-header {
   padding: 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Garante espaço entre logo e botão */
+  justify-content: space-between;
+  height: 70px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  height: 70px; /* Altura fixa para alinhar */
-}
-.sidebar-header .logo {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-  border-radius: 50%;
+  white-space: nowrap; /* Impede que o texto quebre linha ao recolher */
 }
 
-.sidebar-header h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  opacity: 1;
+  transition: opacity 0.2s;
 }
 
+.sidebar.collapsed .sidebar-logo {
+  opacity: 0; /* Esconde o logo suavemente */
+  pointer-events: none;
+}
+
+/* Navegação e Footer */
 .sidebar-nav {
+  flex: 1; /* Ocupa todo o espaço disponível no meio */
   padding: 20px 0;
+  overflow-y: auto; /* Permite scroll se o menu for muito grande */
 }
 
-.sidebar-nav ul {
-  list-style: none;
+.sidebar-footer {
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-nav li {
-  margin-bottom: 5px;
-}
+.sidebar ul { list-style: none; }
+.sidebar li { margin-bottom: 5px; }
 
-.sidebar-nav a {
+.sidebar a {
   display: flex;
   align-items: center;
   padding: 12px 20px;
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
-  transition: var(--transicao);
+  transition: background 0.2s;
+  white-space: nowrap; /* Importante para o texto não quebrar */
 }
 
-.sidebar-nav a:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
+.sidebar a:hover { background: rgba(255, 255, 255, 0.1); }
 
-.sidebar-nav i {
+.sidebar i {
+  min-width: 30px; /* Garante que o ícone tenha espaço fixo e fique centralizado */
+  font-size: 1.1rem;
+  text-align: center;
   margin-right: 10px;
-  font-size: 1rem;
 }
 
+.sidebar span {
+  transition: opacity 0.2s;
+  opacity: 1;
+}
+
+/* Esconde o texto quando recolhido */
+.sidebar.collapsed span {
+  opacity: 0;
+  display: none;
+}
+
+/* Item Ativo */
 .sidebar-nav .active a {
-  background: var(--cor-primaria-dark); /* <-- USANDO A VARIÁVEL */
+  background: var(--cor-primaria-dark);
   color: white;
-  position: relative;
+  border-left: 4px solid var(--cor-aviso);
 }
 
-.sidebar-nav .active a::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 3px;
-  background: var(--cor-aviso); /* <-- USANDO A VARIÁVEL (Dourado) */
+/* Botão de Logout (Estilo Especial) */
+.logout-link:hover {
+  background-color: var(--cor-erro) !important;
+  color: white;
 }
 
-.sidebar-nav .logout a {
-  color: var(--cor-erro); /* <-- USANDO A VARIÁVEL */
-}
-
+/* Botão Toggle */
 .toggle-sidebar {
-
-  right: -15px;
-  top: 20px;
-  background: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  width: 35px;
+  height: 35px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border: none;
-  z-index: 101;
-  transition: var(--transicao);
-}
-
-.sidebar.collapsed .toggle-sidebar i {
-  transform: rotate(180deg);
-}
-
-.toggle-sidebar i {
-  transition: transform 0.3s ease;
-}
-
-.toggle-sidebar:hover {
-  background: var(--cor-secundaria); /* <-- USANDO A VARIÁVEL */
   color: white;
+  transition: 0.3s;
 }
+.toggle-sidebar:hover { background: var(--cor-terciaria); color: var(--cor-texto); }
 
-/* Main Content */
+.sidebar.collapsed .toggle-sidebar i { transform: rotate(180deg); }
+
+
+/* === CONTEÚDO PRINCIPAL === */
 .main-content {
   flex: 1;
   margin-left: 250px;
-  transition: var(--transicao);
+  transition: margin-left 0.3s ease; /* Animação sincronizada com a sidebar */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .sidebar.collapsed ~ .main-content {
   margin-left: 70px;
 }
 
-.topbar {
-  background: white;
-  padding: 15px 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 99;
+/* === OUTROS COMPONENTES === */
+.admin-banner {
+    background-color: var(--cor-texto);
+    color: var(--cor-aviso);
+    text-align: center;
+    padding: 5px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    position: fixed; /* Fica fixo no topo */
+    top: 0;
+    right: 0;
+    left: 250px; /* Começa depois da sidebar */
+    z-index: 99;
+    transition: left 0.3s ease;
 }
+.sidebar.collapsed ~ .main-content .admin-banner { left: 70px; }
 
-.topbar .toggle-sidebar {
-  display: none;
-  background: transparent;
-  border: none;
-  color: var(--cor-primaria);
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.user-info {
-  font-weight: 500;
-}
-
-/* Content Section */
-.content-section {
-  padding: 25px;
-}
-
+/* Footer */
 .main-footer {
-    margin-top: auto; /* Empurra o rodapé para o fundo */
+    margin-top: auto;
     padding: 20px;
     text-align: center;
     color: var(--cor-texto-claro);
@@ -240,11 +193,34 @@ body {
     background-color: var(--cor-fundo);
 }
 
-.main-content {
-    flex: 1;
-    margin-left: 250px;
-    transition: var(--transicao);
-    display: flex;
-    flex-direction: column; /* Para o footer funcionar */
-    min-height: 100vh;
+/* Badge (Botão Assinar) */
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: white;
+}
+.badge-success { background-color: var(--cor-sucesso); }
+.badge-warning { background-color: var(--cor-aviso); color: var(--cor-texto); }
+
+/* Layout Sem Sidebar */
+body.no-sidebar .main-content { margin-left: 0 !important; width: 100%; }
+body.no-sidebar .sidebar { display: none !important; }
+body.no-sidebar .admin-banner { left: 0; }
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.collapsed { transform: translateX(0); width: 250px; }
+    .main-content { margin-left: 0; }
+    .sidebar.collapsed ~ .main-content { margin-left: 0; } /* Overlay no mobile */
+    
+    .toggle-sidebar {
+        background: var(--cor-primaria);
+        position: fixed;
+        left: 10px; top: 10px; z-index: 1001;
+    }
 }

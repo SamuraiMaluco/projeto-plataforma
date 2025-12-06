@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-{% block body_class %}auth-page login-page{% endblock %}
+{% block body_class %}auth-page login-page no-sidebar{% endblock %}
+
+{% block sidebar %}{% endblock %}
 
 {% block content %}
 <div class="auth-container">
@@ -48,7 +50,7 @@
 
 {% block scripts %}
 <script type="module">
-import { AuthService } from '/static/js/services/auth.service.js';
+import { AuthService } from "{{ url_for('static', filename='js/services/auth.services.js') }}";
 
 document.addEventListener('DOMContentLoaded', () => {
     const authService = new AuthService();
@@ -57,21 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('.auth-form');
     if (form) {
         form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            // Nota: Se quiser usar o AJAX do AuthService, descomente o preventDefault.
+            // Se quiser o POST padrão do formulário (que já implementamos na rota), deixe assim.
+            // e.preventDefault();
             
-            const formData = new FormData(form);
-            try {
-                const response = await authService.login({
-                    email: formData.get('email'),
-                    password: formData.get('password')
-                });
-                
-                // Redirecionamento após login
-                window.location.href = response.redirect || '/';
-            } catch (error) {
-                // Tratamento de erro
-                console.error('Login error:', error);
-            }
+            // ... lógica extra se necessário ...
         });
     }
 });

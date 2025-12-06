@@ -6,6 +6,12 @@ from datetime import datetime
 from .models import Subject, Content, Lesson
 from modules.progress.models import LessonProgress
 
+#imports do admin
+
+from core.extensions import db 
+from core.decorators import admin_required # Para proteger as rotas
+from .models import Subject, Content, Lesson
+from modules.progress.models import LessonProgress
 bp = Blueprint('content', __name__, url_prefix='/content')
 
 @bp.route('/subjects')
@@ -61,6 +67,61 @@ def lesson_detail(lesson_id):
 @login_required
 def view_subject(subject_id):
     return f"Visualizando conteúdos da matéria {subject_id} (requer login)"
+
+
+#administrador
+@bp.route('/add-lesson', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def add_lesson():
+    # Busca matérias e conteúdos para preencher os selects do formulário
+    subjects = Subject.query.all()
+    contents = Content.query.all()
+    
+    if request.method == 'POST':
+        title = request.form.get('titulo')
+        content_id = request.form.get('content_id')
+        video_url = request.form.get('video_url')
+        description = request.form.get('descricao')
+        duration = request.form.get('duracao')
+        is_free = request.form.get('gratis') == 'on' # Checkbox retorna 'on' se marcado
+        
+        if not title or not content_id:
+            flash('Título e Conteúdo são obrigatórios.', 'danger')
+        else:
+            # Cria a nova aula
+            new_lesson = Lesson(
+                title=title,
+                content_id=content_id,
+                media_url=video_url,
+                content_text=description,
+                duration=int(duration) if duration else 0,
+                is_free=is_free,
+                # Ordem automática: pega a última + 1
+                order=Lesson.query.filter_by(content_id=content_id).count() + 1
+            )
+            db.session.add(new_lesson)
+            db.session.commit()
+            flash('Aula criada com sucesso!', 'success')
+            return redirect(url_for('content.list_subjects'))
+
+    return render_template('adicionar_conteudo.html', subjects=subjects, contents=contents)
+
+@bp.route('/delete-lesson/<int:lesson_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_lesson(lesson_id):
+    lesson = Lesson.query.get_or_404(lesson_id)
+    # Remove progressos associados primeiro (para não dar erro de chave estrangeira)
+    LessonProgress.query.filter_by(lesson_id=lesson.id).delete()
+    
+    db.session.delete(lesson)
+    db.session.commit()
+    flash('Aula removida com sucesso.', 'info')
+    return redirect(url_for('content.list_subjects'))
+
+
+
 
 def init_content_routes(app):
     app.register_blueprint(bp)

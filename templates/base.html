@@ -22,6 +22,9 @@
     </div>
     {% endif %}
 
+
+
+    {% block sidebar %}
     <aside class="sidebar">
         <div class="sidebar-header"> <h2 class="sidebar__logo">StudyDB</h2>
             
@@ -30,7 +33,7 @@
             </button>
         </div>
         
-        <nav class="sidebar__nav">
+        <nav class="sidebar-nav">
             <ul>
                 <li class="{% if request.endpoint == 'core.home' %}active{% endif %}">
                     <a href="{{ url_for('core.home') }}">
@@ -47,9 +50,28 @@
                     </a>
                 </li>
                 {% endif %}
+
+                <div class="sidebar-footer">
+                    <ul>
+                        {%if current_user.is_authenticated%}
+                        <li>
+                            <a href="{{ url_for('auth.logout') }}" class="logout-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{{ url_for('auth.login') }}">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Entrar</span>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </nav>
     </aside>
+    {%endblock%}
 
     <main class="main-content">
         

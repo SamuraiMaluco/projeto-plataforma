@@ -5,8 +5,8 @@
 
 {% block content %}
 <div class="lessons-container">
-    <!-- Filtros -->
-    <div class="lessons-filters">
+    
+    <div class="lessons-filters" style="justify-content: space-between;">
         <div class="filter-group">
             <label for="subject-filter"><i class="fas fa-filter"></i> Matéria:</label>
             <select id="subject-filter" class="form-select">
@@ -16,33 +16,46 @@
                 {% endfor %}
             </select>
         </div>
+
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <a href="{{ url_for('content.add_lesson') }}" class="btn-primary" style="text-decoration: none; padding: 8px 15px; border-radius: 5px;">
+            <i class="fas fa-plus"></i> Nova Aula
+        </a>
+        {% endif %}
     </div>
 
-    <!-- Lista de Aulas -->
     <div class="lessons-grid">
         {% for lesson in lessons %}
-        <a href="{{ url_for('content.lesson_detail', lesson_id=lesson.id) }}" class="lesson-card">
-            <div class="lesson-card__media">
-                {% if lesson.type == 'video' %}
-                <i class="fas fa-play-circle"></i>
-                <img src="{{ lesson.thumbnail_url }}" alt="{{ lesson.title }}">
-                {% elif lesson.type == 'pdf' %}
-                <i class="fas fa-file-pdf"></i>
-                {% endif %}
-            </div>
-            <div class="lesson-card__body">
-                <h3>{{ lesson.title }}</h3>
-                <div class="lesson-meta">
-                    <span class="badge {{ lesson.level }}">{{ lesson.level }}</span>
-                    <span>{{ lesson.duration }} min</span>
+        <div class="lesson-card-wrapper" style="position: relative;">
+            
+            <a href="{{ url_for('content.lesson_detail', lesson_id=lesson.id) }}" class="lesson-card">
+                <div class="lesson-card__media">
+                    <i class="fas fa-play-circle"></i>
+                    {% if lesson.thumbnail_url %}
+                    <img src="{{ lesson.thumbnail_url }}" alt="{{ lesson.title }}">
+                    {% endif %}
                 </div>
-                {% if lesson.progress %}
-                <div class="progress">
-                    <div class="progress-bar" style="width: {{ lesson.progress }}%;"></div>
+                <div class="lesson-card__body">
+                    <h3>{{ lesson.title }}</h3>
+                    <div class="lesson-meta">
+                        <span class="badge">{{ lesson.content.subject.name }}</span>
+                        <span>{{ lesson.duration }} min</span>
+                    </div>
                 </div>
-                {% endif %}
-            </div>
-        </a>
+            </a>
+
+            {% if current_user.is_authenticated and current_user.is_admin %}
+            <form action="{{ url_for('content.delete_lesson', lesson_id=lesson.id) }}" method="POST" 
+                  style="position: absolute; top: 10px; right: 10px; z-index: 10;"
+                  onsubmit="return confirm('Tem certeza que deseja excluir esta aula?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" style="background: red; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+            {% endif %}
+            
+        </div>
         {% endfor %}
     </div>
 </div>

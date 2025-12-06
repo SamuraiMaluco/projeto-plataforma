@@ -46,9 +46,10 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.badge.economize {
+.plano-card .badge.economize {
     background: var(--cor-aviso); /* <-- USANDO A VARIÁVEL (Dourado) */
 }
+
 
 .plano-card h3 {
     margin-top: 15px;

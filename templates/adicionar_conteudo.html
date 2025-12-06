@@ -1,114 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h2>Adicionar Novo Conteúdo</h2>
-    <form method="POST" enctype="multipart/form-data">
-        <!-- Campos básicos -->
-        <div class="form-group">
-            <label>Título</label>
-            <input type="text" name="titulo" class="form-control" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Matéria</label>
-            <select name="materia_id" class="form-control" required>
-                {% for materia in materias %}
-                <option value="{{ materia.id }}">{{ materia.nome }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>Tipo de Conteúdo</label>
-            <select name="tipo" id="tipoConteudo" class="form-control" required>
-                <option value="video">Vídeo</option>
-                <option value="audio">Áudio</option>
-                <option value="imagem">Imagem</option>
-                <option value="texto">Texto</option>
-            </select>
-        </div>
-        
-        <!-- Seção dinâmica por tipo -->
-        <div id="videoFields" class="tipo-fields">
+<div class="container" style="max-width: 800px; padding: 40px 20px;">
+    <h2 style="color: var(--cor-primaria); margin-bottom: 30px;">Adicionar Nova Aula</h2>
+    
+    <div class="content-box"> <form method="POST" action="{{ url_for('content.add_lesson') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
             <div class="form-group">
-                <label>Upload Vídeo</label>
-                <input type="file" id="videoUpload" class="form-control">
-                <button type="button" id="btnUploadVideo" class="btn btn-secondary">Enviar</button>
-                <input type="hidden" name="video_url" id="videoUrl">
+                <label class="form-label">Título da Aula</label>
+                <input type="text" name="titulo" class="form-control" required placeholder="Ex: Introdução à Álgebra">
             </div>
             
             <div class="form-group">
-                <label>Thumbnail (opcional)</label>
-                <input type="file" id="thumbnailUpload" class="form-control">
-                <input type="hidden" name="thumbnail_url" id="thumbnailUrl">
+                <label class="form-label">Módulo/Conteúdo</label>
+                <select name="content_id" class="form-control" required>
+                    <option value="" disabled selected>Selecione um módulo...</option>
+                    {% for content in contents %}
+                    <option value="{{ content.id }}">{{ content.subject.name }} > {{ content.title }}</option>
+                    {% endfor %}
+                </select>
             </div>
             
             <div class="form-group">
-                <label>Duração (segundos)</label>
-                <input type="number" name="duracao" class="form-control">
+                <label class="form-label">URL do Vídeo (MP4 ou Link)</label>
+                <input type="text" name="video_url" class="form-control" placeholder="http://...">
             </div>
             
             <div class="form-group">
-                <label>Transcrição (para acessibilidade)</label>
-                <textarea name="transcricao" class="form-control" rows="4"></textarea>
+                <label class="form-label">Duração (minutos)</label>
+                <input type="number" name="duracao" class="form-control" style="width: 150px;">
             </div>
-        </div>
-        
-        <div id="audioFields" class="tipo-fields" style="display:none;">
-            <!-- Campos similares para áudio -->
-        </div>
-        
-        <div id="imagemFields" class="tipo-fields" style="display:none;">
-            <!-- Campos para imagem -->
-        </div>
-        
-        <div class="form-group">
-            <label>Ordem de Exibição</label>
-            <input type="number" name="ordem" class="form-control" required>
-        </div>
-        
-        <div class="form-check">
-            <input type="checkbox" name="pago" id="pago" class="form-check-input">
-            <label for="pago" class="form-check-label">Conteúdo Premium</label>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Salvar Conteúdo</button>
-    </form>
+            
+            <div class="form-group">
+                <label class="form-label">Descrição (Texto da Aula)</label>
+                <textarea name="descricao" class="form-control" rows="5"></textarea>
+            </div>
+            
+            <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" name="gratis" id="gratis" style="width: auto;">
+                <label for="gratis" style="margin: 0; cursor: pointer;">Aula Gratuita (Acessível sem assinatura)</label>
+            </div>
+            
+            <button type="submit" class="btn-primary" style="margin-top: 20px;">Salvar Aula</button>
+        </form>
+    </div>
 </div>
-
-<script>
-// Controle dos campos dinâmicos
-document.getElementById('tipoConteudo').addEventListener('change', function() {
-    document.querySelectorAll('.tipo-fields').forEach(el => {
-        el.style.display = 'none';
-    });
-    
-    document.getElementById(this.value + 'Fields').style.display = 'block';
-});
-
-// Upload de arquivos
-document.getElementById('btnUploadVideo').addEventListener('click', function() {
-    const fileInput = document.getElementById('videoUpload');
-    if (fileInput.files.length === 0) return;
-    
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    formData.append('filetype', 'video');
-    
-    fetch('/upload', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.url) {
-            document.getElementById('videoUrl').value = data.url;
-            alert('Vídeo enviado com sucesso!');
-        } else {
-            alert('Erro no upload: ' + (data.error || 'Desconhecido'));
-        }
-    });
-});
-</script>
 {% endblock %}
