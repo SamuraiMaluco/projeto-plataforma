@@ -3,3 +3,4 @@ UTILIZAR PARA ATIVAR O AMBIENTE VIRTUAL QUE ESTA CONFIGURADO
 source venv/Scripts/activate (GIT BASH
 )
 logo apos inserir no terminal python main.py
+deactivate (sai do ambiente)
