@@ -1,48 +1,42 @@
-# /modules/progress/services.py
-
-from datetime import datetime
 from core.extensions import db
-# Importamos os modelos corretos de conteúdo e progresso
-from modules.content.models import Lesson, Content
-from .models import LessonProgress, SubjectProgress
+from modules.content.models import LessonProgress, SubjectProgress, Module, Lesson
+from flask_login import current_user
 
 class ProgressService:
+    
     @staticmethod
-    def complete_lesson(user_id, lesson_id):
-        """
-        Esta função combina a sua lógica de 'salvar_progresso'.
-        Ela encontra ou cria o progresso da lição, marca como concluída,
-        e depois atualiza o progresso geral da matéria.
-        """
-        # (O seu código existente de complete_lesson continua aqui...)
-        # ...
-        # ...
-        db.session.commit()
-        return lesson_progress, subject_progress
-
-
-    # --- FUNÇÃO ADICIONADA ---
-    @staticmethod
-    def get_user_progress_summary(user_id):
-        """
-        Calcula o progresso total do usuário para o dashboard.
-        """
-        # Conta o total de aulas concluídas pelo usuário
-        completed_lessons = LessonProgress.query.filter_by(
-            user_id=user_id, 
-            is_completed=True
+    def get_module_progress(user_id, module_id):
+        """Calcula a porcentagem de conclusão de um Módulo (antigo Content)"""
+        module = Module.query.get(module_id)
+        if not module:
+            return 0
+            
+        total_lessons = module.lessons.count()
+        if total_lessons == 0:
+            return 0
+            
+        # Conta quantas aulas desse módulo o usuário completou
+        completed_lessons = LessonProgress.query.join(Lesson).filter(
+            LessonProgress.user_id == user_id,
+            LessonProgress.completed == True,
+            Lesson.module_id == module_id
         ).count()
+        
+        return int((completed_lessons / total_lessons) * 100)
 
-        # Conta o total de aulas existentes na plataforma
-        total_lessons = Lesson.query.count()
-        
-        if total_lessons > 0:
-            percentage = round((completed_lessons / total_lessons) * 100)
+    @staticmethod
+    def mark_lesson_completed(user_id, lesson_id):
+        progress = LessonProgress.query.filter_by(
+            user_id=user_id, 
+            lesson_id=lesson_id
+        ).first()
+
+        if not progress:
+            progress = LessonProgress(user_id=user_id, lesson_id=lesson_id, completed=True)
+            db.session.add(progress)
         else:
-            percentage = 0
+            progress.completed = True
+            progress.updated_at = db.func.now()
         
-        return {
-            'completed_lessons': completed_lessons,
-            'total_lessons': total_lessons,
-            'completion_percentage': percentage
-        }
+        db.session.commit()
+        return True

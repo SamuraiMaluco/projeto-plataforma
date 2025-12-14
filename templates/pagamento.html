@@ -1,108 +1,80 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pagamento.css') }}">
-<script src="https://sdk.mercadopago.com/js/v2"></script>
 {% endblock %}
 
 {% block content %}
-
-<div class="payment-container">
-    <h2>Escolha seu Plano Anual</h2>
-    
-    <div id="payment-error" role="alert" style="color: red; margin-top: 10px; text-align: center;"></div>
-    
-    <div class="planos-grid">
-        <div class="plano-card {% if plano == 'anual_parcelado' %}destaque{% endif %}">
-            <div class="badge">Até 12x</div>
-            <h3>Plano Anual Parcelado</h3>
-            <div class="preco">R$ 570<small>,00</small></div>
-            <div class="total">ou 12x de R$ 47,50</div>
-            <ul class="beneficios">
-                <li>Acesso imediato a todos os conteúdos</li>
-                <li>Pague com Cartão, Pix ou Boleto</li>
-                <li>Renovação automática após 1 ano</li>
-                <li>Cancelamento a qualquer momento</li>
-            </ul>
-            <button id="btn-pagar-parcelado" data-plano="anual_parcelado" class="btn-plano">Assinar Agora</button>
-        </div>
-
-        <div class="plano-card {% if plano == 'anual_avista' %}destaque{% endif %}">
-            <div class="badge economize">Economize R$ 116</div>
-            <h3>Plano Anual à Vista</h3>
-            <div class="preco">R$ 456<small>,00</small></div>
-            <div class="economia">20% de desconto</div>
-            <ul class="beneficios">
-                <li>Acesso imediato a todos os conteúdos</li>
-                <li>Pague com Cartão, Pix ou Boleto</li>
-                <li>Pagamento único sem preocupações</li>
-                <li>Renovação automática após 1 ano</li>
-            </ul>
-            <button id="btn-pagar-avista" data-plano="anual_avista" class="btn-plano">Assinar Agora</button>
-        </div>
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2>Escolha o Plano Ideal</h2>
+        <p class="lead text-muted">Invista no seu futuro com acesso ilimitado.</p>
     </div>
 
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-light text-center py-4">
+                    <h4 class="my-0 font-weight-normal">Mensal</h4>
+                </div>
+                <div class="card-body text-center d-flex flex-column">
+                    <h1 class="card-title pricing-card-title">R$ 39<small class="text-muted">,90</small></h1>
+                    <ul class="list-unstyled mt-3 mb-4 flex-grow-1">
+                        <li>Acesso total por 30 dias</li>
+                        <li>Cancele quando quiser</li>
+                        <li>Suporte básico</li>
+                    </ul>
+                    <a href="{{ url_for('payments.criar_preferencia', plano='mensal') }}" class="btn btn-lg btn-block btn-outline-primary mt-auto">
+                        Assinar Mensal
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow border-primary">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h4 class="my-0 font-weight-normal">Anual (Recomendado)</h4>
+                </div>
+                <div class="card-body text-center d-flex flex-column">
+                    <h1 class="card-title pricing-card-title">R$ 399<small class="text-white-50">,90</small></h1>
+                    <p class="text-success font-weight-bold">Economize 2 meses!</p>
+                    <ul class="list-unstyled mt-3 mb-4 flex-grow-1">
+                        <li>Acesso total por 1 ano</li>
+                        <li>Conteúdos exclusivos</li>
+                        <li>Suporte prioritário</li>
+                        <li>Certificado de conclusão</li>
+                    </ul>
+                    <a href="{{ url_for('payments.criar_preferencia', plano='anual_avista') }}" class="btn btn-lg btn-block btn-primary mt-auto">
+                        Assinar Agora
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-light text-center py-4">
+                    <h4 class="my-0 font-weight-normal">Anual Parcelado</h4>
+                </div>
+                <div class="card-body text-center d-flex flex-column">
+                    <h1 class="card-title pricing-card-title">12x R$ 39<small class="text-muted">,99</small></h1>
+                    <small class="text-muted mb-3">Total: R$ 479,90</small>
+                    <ul class="list-unstyled mt-3 mb-4 flex-grow-1">
+                        <li>Pague mês a mês no cartão</li>
+                        <li>Compromisso de 1 ano</li>
+                        <li>Acesso imediato</li>
+                    </ul>
+                    <a href="{{ url_for('payments.criar_preferencia', plano='anual_parcelado') }}" class="btn btn-lg btn-block btn-outline-success mt-auto">
+                        Quero Parcelar
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        // Pega os botões
-        const btnParcelado = document.getElementById('btn-pagar-parcelado');
-        const btnAvista = document.getElementById('btn-pagar-avista');
-        const errorDiv = document.getElementById('payment-error');
-        
-        // Função para lidar com o clique
-        async function handlePaymentClick(event) {
-            const button = event.target;
-            const plano = button.dataset.plano;
-            
-            setLoading(button, true);
-            errorDiv.textContent = ''; // Limpa erros antigos
-
-            // Pega o token CSRF do teu <head> ou de um input
-            // (Assumindo que o tens no 'base.html' como <meta name="csrf-token">)
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-            try {
-                // 1. Chama o nosso backend para criar a preferência
-                const response = await fetch("{{ url_for('payments.criar_preferencia') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify({ plano: plano })
-                });
-
-                const data = await response.json();
-
-                if (data.error) {
-                    showError(data.error);
-                    setLoading(button, false);
-                } else {
-                    // 2. TEMOS O URL! Redireciona o usuário para o checkout do MP
-                    window.location.href = data.init_point;
-                }
-            } catch (error) {
-                showError('Erro ao iniciar pagamento. Tente novamente.');
-                setLoading(button, false);
-            }
-        }
-        
-        // Adiciona o evento aos botões
-        if (btnParcelado) btnParcelado.addEventListener('click', handlePaymentClick);
-        if (btnAvista) btnAvista.addEventListener('click', handlePaymentClick);
-
-        // --- Funções Auxiliares ---
-        function setLoading(button, isLoading) {
-            button.disabled = isLoading;
-            button.innerText = isLoading ? 'A processar...' : 'Assinar Agora';
-        }
-
-        function showError(message) {
-            errorDiv.textContent = message;
-        }
-    });
-</script>
+    
+    <div class="text-center mt-4">
+        <p class="text-muted"><i class="fas fa-lock"></i> Pagamento processado com segurança pelo <strong>Mercado Pago</strong>.</p>
+    </div>
+</div>
 {% endblock %}

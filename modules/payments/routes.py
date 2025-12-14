@@ -1,154 +1,113 @@
-import mercadopago # <<< SDK do MP
+import requests
 import os
-import json
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
+from dotenv import load_dotenv
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from core.extensions import db
 from modules.auth.models import User
-from .models import Payment
 from datetime import datetime, timedelta
 
-bp= Blueprint('payments', __name__, url_prefix='/payments')
+# Configuração
+basedir = os.path.abspath(os.path.dirname(__file__))
+root_dir = os.path.join(basedir, '..', '..')
+load_dotenv(os.path.join(root_dir, '.env'))
 
-#configurando o TOKEN DO MERCADO PAGO
-sdk = mercadopago.SDK(os.environ.get('MP_ACCESS_TOKEN') )
+# Mude para False quando for colocar o site no ar de verdade!
+USAR_SANDBOX = True 
+TOKEN = os.getenv('PAGBANK_TOKEN')
 
-#DEFINE OS PREÇOS EM QUESTÃO 
+# URLs do PagBank
+if USAR_SANDBOX:
+    URL_CRIAR_CHECKOUT = "https://sandbox.api.pagseguro.com/checkouts"
+else:
+    URL_CRIAR_CHECKOUT = "https://api.pagseguro.com/checkouts"
+
+bp = Blueprint('payments', __name__, url_prefix='/payments')
+
+# Preços em Centavos (R$ 39,90 = 3990)
 PRECOS = {
-    'anual_avista': 456.00,
-    'anual_parcelado': 570.00
+    'mensal': {'valor': 3990, 'nome': 'Plano Mensal'},
+    'anual_avista': {'valor': 39990, 'nome': 'Plano Anual'},
+    'anual_parcelado': {'valor': 47990, 'nome': 'Plano Anual Parcelado'}
 }
 
 @bp.route('/')
+@login_required
 def index():
-    #Rota da página de planos
     if current_user.assinatura_valida_ate and current_user.assinatura_valida_ate > datetime.utcnow():
         flash('Você já possui uma assinatura ativa!', 'info')
         return redirect(url_for('core.home'))
-    
-    return render_template('pagamento.html',
-                           plano=request.args.get('plano'))
-    
-@bp.route('/criar_preferencia', methods=['POST'])
-@login_required
-def criar_preferencia():
-    #Rota criada pelo javascript do pagamento.html para criar uma preferência de pagamento no MP
-    #devolve a url de redirect para o frontend
-    data = request.get_json()
-    plano = data.get('plano')
-    
-    if plano not in PRECOS:
-        return jsonify({'error': 'Plano inválido'}), 400
-    
-    
-    
-    amount = PRECOS[plano]
-    
-    # Obtém o URL base do teu site (ex: http://127.0.0.1:5000)
-    # IMPORTANTE: Para o webhook funcionar, isto terá de ser um URL público (ver Passo 2.E)
-    base_url = request.url_root 
+    return render_template('pagamento.html')
 
-    # Dados da preferência de pagamento
-    preference_data = {
+@bp.route('/checkout/<string:plano>')
+@login_required
+def checkout(plano):
+    if not TOKEN:
+        flash('Erro: Token do PagBank não configurado no .env', 'danger')
+        return redirect(url_for('payments.index'))
+
+    if plano not in PRECOS:
+        flash('Plano inválido.', 'danger')
+        return redirect(url_for('payments.index'))
+
+    dados_plano = PRECOS[plano]
+    
+    # Payload para a API do PagBank
+    payload = {
+        "reference_id": f"user_{current_user.id}_{plano}",
+        "customer": {
+            "name": current_user.username,
+            "email": current_user.email,
+            "tax_id": "12345678909", # CPF de Teste (Sandbox aceita qualquer um válido)
+        },
         "items": [
             {
-                "title": f"Assinatura Anual - Plano {plano}",
+                "reference_id": plano,
+                "name": dados_plano['nome'],
                 "quantity": 1,
-                "currency_id": "BRL",
-                "unit_price": amount
+                "unit_amount": dados_plano['valor']
             }
         ],
-        "payer": {
-            "email": current_user.email,
-        },
-        "back_urls": {
-            # URLs para onde o usuário é redirecionado após o pagamento
-            "success": url_for('payments.pagamento_sucesso', _external=True),
-            "failure": url_for('payments.index', _external=True),
-            "pending": url_for('payments.index', _external=True)
-        },
-        "auto_return": "approved", # Só retorna automaticamente se for aprovado
-        "notification_url": f"{base_url}payments/mp-webhook", # Onde o MP vai nos avisar
-        "external_reference": f"user_id_{current_user.id}_plano_{plano}" # Guardamos o ID do usuário aqui
+        "redirect_url": url_for('payments.aprovado', _external=True),
+        # notification_urls é opcional no teste, mas bom ter
+    }
+
+    headers = {
+        "Authorization": f"Bearer {TOKEN}",
+        "Content-Type": "application/json",
+        "accept": "application/json"
     }
 
     try:
-        # Cria a preferência de pagamento
-        preference_response = sdk.preference().create(preference_data)
-        preference = preference_response["response"]
+        response = requests.post(URL_CRIAR_CHECKOUT, json=payload, headers=headers)
         
-        # Devolve o 'init_point' (URL de pagamento do MP) para o frontend
-        return jsonify({
-            'init_point': preference['init_point']
-        })
-    except Exception as e:
-        print("Erro ao criar preferência:", e)
-        return jsonify({'error': str(e)}), 500
-
-
-@bp.route('/mp-webhook', methods=['POST'])
-def mp_webhook():
-
-    #Esta rota é chamada APENAS pelo Mercado Pago (IPN).
-    #É aqui que confirmamos o pagamento e damos o acesso.
-  
-    data = request.get_json()
-    
-    try:
-        if data.get("type") == "payment":
-            payment_id = data.get("data", {}).get("id")
-            if not payment_id:
-                return "payment_id missing", 400
-
-            # Busca os dados completos do pagamento no MP
-            payment_info_response = sdk.payment().get(payment_id)
-            payment = payment_info_response["response"]
-
-            if payment["status"] == "approved":
-                # Pagamento APROVADO!
-                
-                # Pega a referência que guardámos (ex: "user_id_123_plano_anual")
-                external_reference = payment.get("external_reference")
-                if not external_reference or not external_reference.startswith("user_id_"):
-                    return "external_reference inválida", 400
-                
-                # Extrai o ID do usuário
-                user_id = int(external_reference.split("_")[2]) 
-                
-                user = User.query.get(user_id)
-                if not user:
-                    return "Usuário não encontrado", 404
-
-                # --- LÓGICA DE NEGÓCIO CRÍTICA ---
-                # Adiciona 1 ano de acesso ao utilizador
-                user.assinatura_valida_ate = datetime.utcnow() + timedelta(days=366)
-                
-                # Regista o pagamento na nossa tabela `Payment`
-                novo_pagamento = Payment(
-                    amount=payment["transaction_amount"],
-                    status='succeeded',
-                    user_id=user_id
-                )
-                db.session.add(novo_pagamento)
-                db.session.add(user)
-                db.session.commit()
+        if response.status_code == 201: # Sucesso (Created)
+            dados = response.json()
+            # Pega o link de pagamento na resposta
+            for link in dados.get('links', []):
+                if link['rel'] == 'PAY':
+                    return redirect(link['href'])
+            
+            flash('Erro: Link de pagamento não encontrado.', 'warning')
+        else:
+            print(f"Erro PagBank: {response.text}")
+            flash('Erro ao criar pagamento no PagBank.', 'danger')
 
     except Exception as e:
-        print(f"Erro no webhook: {e}")
-        db.session.rollback()
-        return "webhook error", 500
+        print(f"Erro de conexão: {e}")
+        flash('Erro interno ao processar pagamento.', 'danger')
 
-    return "OK", 200 # Responde OK para o Mercado Pago
+    return redirect(url_for('payments.index'))
 
-
-@bp.route('/pagamento-sucesso')
+@bp.route('/aprovado')
 @login_required
-def pagamento_sucesso():
-    #Página para onde o usuário é redirecionado após pagar.
-    flash("Pagamento aprovado! Bem-vindo(a)!", "success")
+def aprovado():
+    user = User.query.get(current_user.id)
+    user.assinatura_valida_ate = datetime.utcnow() + timedelta(days=30)
+    db.session.commit()
+    flash("Pagamento Iniciado! Acesso liberado temporariamente.", "success")
     return redirect(url_for('core.home'))
 
-
+# Função obrigatória para o Flask carregar o módulo
 def init_payments_routes(app):
     app.register_blueprint(bp)
-    

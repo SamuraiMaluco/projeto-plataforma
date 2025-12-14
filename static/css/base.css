@@ -1,37 +1,45 @@
 /* static/CSS/base.css */
 
 :root {
-  /* === 1. A NOSSA PALETA === */
-  --cor-primaria: #6D4C41;
-  --cor-primaria-dark: #4E342E;
-  --cor-secundaria: #A1887F;
-  --cor-texto: #3E2723;
-  --cor-texto-claro: #8D6E63;
-  --cor-fundo: #F9F6F1;
-  --cor-fundo-card: #FFFFFF;
-  --cor-sucesso: #2E7D32;
-  --cor-aviso: #E6A843;
-  --cor-erro: #C62828;
-  --cor-info: #546E7A;
-  
-  /* === 2. VARIÁVEIS DE LAYOUT === */
-  --spacing-unit: 1rem;
-  --borda-radius: 8px;
-  --cor-borda: #D7CCC8;
-  --sombra: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --sombra-card: 0 2px 10px rgba(0, 0, 0, 0.08);
-  --transicao: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+/* Identidade Visual - Deep Focus */
+    --primary-color: #0F172A;       /* Azul Petróleo Escuro (Fundo do menu/sidebar) */
+    --secondary-color: #334155;     /* Cinza Azulado (Botões secundários) */
+    --accent-color: #F59E0B;        /* Âmbar/Dourado (Botões de Ação/Destaque) */
+    
+    /* Textos e Fundos */
+    --bg-color: #F8FAFC;            /* Branco Gelo (Fundo do site, não cansa a vista) */
+    --card-bg: #FFFFFF;             /* Branco Puro (Cartões de aula) */
+    --text-primary: #1E293B;        /* Quase Preto (Títulos) */
+    --text-secondary: #64748B;      /* Cinza (Descrições) */
+    
+    /* Feedback */
+    --success-color: #10B981;       /* Verde Esmeralda (Concluído) */
+    --danger-color: #EF4444;        /* Vermelho Suave (Erro/Sair) */
 }
 
 /* === 3. ESTILOS GERAIS === */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
 body {
-  background-color: var(--cor-fundo);
-  color: var(--cor-texto);
-  display: flex;
-  min-height: 100vh;
+ 
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif; /* Sugestão: Fonte limpa e moderna */
 }
+
+/* Exemplo de Botão Principal */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color); /* Fica dourado ao passar o mouse */
+    color: #000;
+}
+
 
 /* === SIDEBAR (Melhorada com Flexbox) === */
 .sidebar {

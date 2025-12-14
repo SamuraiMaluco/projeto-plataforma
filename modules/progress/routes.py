@@ -1,10 +1,8 @@
-# /modules/progress/routes.py
 from flask import Blueprint, jsonify
 from flask_login import login_required, current_user
 from .services import ProgressService
-# --- IMPORTS ADICIONADOS ---
-from .models import LessonProgress, SubjectProgress
-# --- FIM DOS IMPORTS ---
+# CORREÇÃO 1: Importamos do módulo content, onde os modelos vivem agora
+from modules.content.models import LessonProgress, SubjectProgress
 
 bp = Blueprint('progress', __name__, url_prefix='/progress')
 
@@ -12,10 +10,10 @@ bp = Blueprint('progress', __name__, url_prefix='/progress')
 @login_required
 def complete_lesson(lesson_id):
     try:
-        lesson_progress, subject_progress = ProgressService.complete_lesson(current_user.id, lesson_id)
+        # CORREÇÃO 2: Usamos o nome da função que está no seu services.py
+        ProgressService.mark_lesson_completed(current_user.id, lesson_id)
         return jsonify({'status': 'success'})
     except Exception as e:
-        # Retorna o erro real para o JS (bom para debug)
         return jsonify({'status': 'error', 'message': str(e)}), 400
 
 def init_progress_routes(app):

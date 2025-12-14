@@ -25,6 +25,14 @@ class User(db.Model, UserMixin):
     exam_attempts = db.relationship('ExamAttempt', back_populates='user', lazy='dynamic')
     
     
+    @property
+    def is_premium(self):
+        #propriedade inteligente: retorna True se a data for futura
+        if self.assinatura_valida_ate:
+            return self.assinatura_valida_ate > datetime.utcnow()
+        return False
+    
+    
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

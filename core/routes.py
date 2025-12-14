@@ -1,5 +1,6 @@
+
 # /core/routes.py
-from flask import Blueprint, render_template, session, redirect, url_for
+from flask import Blueprint, render_template, session, redirect, url_for, flash
 from flask_login import current_user
 from datetime import datetime, timedelta # Importa datetime E timedelta
 from modules.auth.models import User
