@@ -1,12 +1,12 @@
 /* --- CONFIGURAÇÕES GERAIS --- */
 :root {
-    --primary-color: #0d6efd; /* Ajuste para a cor do seu site */
+    --primary-color: #0d6efd;
     --hover-bg: #f8f9fa;
     --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --card-hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* --- CARDS DAS MATÉRIAS (index.html) --- */
+/* --- CARDS DAS MATÉRIAS --- */
 .hover-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-radius: 12px;
@@ -26,7 +26,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(13, 110, 253, 0.1); /* Fundo azulzinho suave */
+    background-color: rgba(13, 110, 253, 0.1);
     border-radius: 50%;
     transition: background-color 0.3s ease;
 }
@@ -37,10 +37,9 @@
 }
 
 .hover-card:hover .icon-box i {
-    color: white; /* Garante que o ícone fique branco no hover */
+    color: white;
 }
 
-/* Link estendido para clicar no card todo */
 .stretched-link::after {
     position: absolute;
     top: 0;
@@ -51,7 +50,7 @@
     content: "";
 }
 
-/* --- LISTA DE MÓDULOS (subject.html) --- */
+/* --- LISTA DE MÓDULOS (ACORDEÃO) --- */
 .accordion-button:not(.collapsed) {
     background-color: rgba(13, 110, 253, 0.05);
     color: var(--primary-color);
@@ -69,49 +68,72 @@
     transition: background-color 0.2s;
 }
 
-.list-group-item:first-child {
-    border-top: none;
-}
-
 .list-group-item:hover {
     background-color: #f8f9fa;
     cursor: pointer;
 }
 
-/* --- PLAYER DA AULA (player.html) --- */
+/* --- PLAYER DA AULA --- */
 .lesson-description {
     font-size: 1rem;
     line-height: 1.7;
     color: #4a5568;
 }
 
-.lesson-description h1, 
-.lesson-description h2, 
-.lesson-description h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    color: #2d3748;
-}
-
-.lesson-description p {
-    margin-bottom: 1rem;
-}
-
-/* Ajuste fino para o player de vídeo */
 .ratio-16x9 {
-    border-radius: 0; /* Remove borda arredondada se quiser full width */
     background-color: #000;
 }
 
-/* Player de áudio personalizado */
-audio {
-    height: 40px;
-    outline: none;
+/* --- CORREÇÃO DE CORES DOS BOTÕES --- */
+/* Botão Primário */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #fff !important;
 }
 
-/* Botões de navegação */
-.btn-outline-primary:disabled,
-.btn-outline-secondary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+.btn-primary:hover {
+    background-color: #0b5ed7 !important;
+    color: #fff !important;
+}
+
+/* Botão Secundário */
+.btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a !important;
+    color: #fff !important;
+}
+
+/* Botões Outline */
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    color: #fff !important;
+    background-color: var(--primary-color) !important;
+}
+
+.btn-outline-secondary {
+    color: #6c757d !important;
+    border-color: #6c757d !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-secondary:hover {
+    color: #fff !important;
+    background-color: #6c757d !important;
+}
+
+/* Ajustes Globais */
+.main-content {
+    background-color: #f8f9fa;
+    min-height: 100vh;
 }

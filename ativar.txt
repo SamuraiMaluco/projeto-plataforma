@@ -1,3 +1,8 @@
+#adicionar o ambiente venv, recvomendo para nao gerar conflito de bibliotecas ja instaladas na maquina e ficar um ambiente isolado de trabalho
+python -m venv venv
+
+
+
 .\venv\Scripts\activate (POWERSHELL)
 UTILIZAR PARA ATIVAR O AMBIENTE VIRTUAL QUE ESTA CONFIGURADO
 source venv/Scripts/activate (GIT BASH

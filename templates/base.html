@@ -1,118 +1,227 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block tittle %}StudyDB{% endblock %}</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/content.css') }}">
+    <title>Plataforma de Aulas</title>
     
-    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    {% block meta %}{% endblock %}
-</head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/content.css') }}?v=3">
 
-<body class="{% block body_class %}{% endblock %}">
-    {% if current_user.is_admin %}
-    <div class="admin-banner">
-        <i class="fas fa-shield-alt"></i> Modo Administrador
-    </div>
-    {% endif %}
+    <style>
+        /* --- ESTILOS DA ESTRUTURA (LAYOUT) --- */
+        :root {
+            --sidebar-width: 240px;       /* Tamanho normal (diminuí um pouco) */
+            --sidebar-collapsed-width: 60px; /* Tamanho recolhido (só ícones) */
+            --top-height: 0px;            /* Se tiver header superior, ajuste aqui */
+            --primary-color: #0d6efd;
+        }
 
+        body {
+            background-color: #f4f6f9;
+            overflow-x: hidden; /* Evita barra de rolagem horizontal na animação */
+        }
 
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #212529; /* Fundo Escuro FIXO */
+            color: #fff;
+            transition: all 0.3s ease; /* A Mágica da Animação */
+            z-index: 1000;
+            overflow-y: auto;
+            white-space: nowrap; /* Evita que o texto quebre ao encolher */
+        }
 
-    {% block sidebar %}
-    <aside class="sidebar">
-        <div class="sidebar-header"> <h2 class="sidebar__logo">StudyDB</h2>
+        /* Estado Recolhido */
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        /* Links do Menu */
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin-bottom: 4px;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            height: 50px; /* Altura fixa para alinhar ícones */
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sidebar .nav-link:hover, 
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            min-width: 20px; /* Largura fixa para o ícone não pular */
+            font-size: 1.1rem;
+            margin-right: 15px;
+            text-align: center;
+        }
+
+        /* Esconde o texto quando recolhido */
+        .sidebar.collapsed .link-text,
+        .sidebar.collapsed .logo-text {
+            display: none; /* Some com o texto */
+            opacity: 0;
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            margin-left: var(--sidebar-width); /* Empurra o conteúdo para o lado */
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease; /* Animação suave junto com a sidebar */
+        }
+
+        /* Ajusta o conteúdo quando a sidebar recolhe */
+        .sidebar.collapsed + .main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* --- BOTÃO DE TOGGLE (HAMBÚRGUER) --- */
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 10px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-header {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- RESPONSIVIDADE (Celular) --- */
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: calc(var(--sidebar-width) * -1); /* Esconde totalmente */
+            }
             
-            <button class="toggle-sidebar" aria-label="Toggle sidebar">
+            .sidebar.mobile-show {
+                margin-left: 0; /* Aparece quando ativo */
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .sidebar.collapsed {
+                width: var(--sidebar-width); /* No celular não encolhe, só esconde */
+            }
+            .sidebar.collapsed .link-text { display: inline; } /* Texto volta */
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+  <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <button class="toggle-btn" id="btnToggle">
                 <i class="fas fa-bars"></i>
             </button>
+            <span class="logo-text fw-bold fs-5">Plataforma</span>
         </div>
-        
-        <nav class="sidebar-nav">
-            <ul>
-                <li class="{% if request.endpoint == 'core.home' %}active{% endif %}">
-                    <a href="{{ url_for('core.home') }}">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                
-                {% if current_user.is_authenticated %}
-                <li class="{% if 'content' in request.endpoint %}active{% endif %}">
-                    <a href="{{ url_for('content.index') }}">
-                        <i class="fas fa-book-open"></i>
-                        <span>Aulas</span>
-                    </a>
-                </li>
-                {% endif %}
 
-                <div class="sidebar-footer">
-                    <ul>
-                        {%if current_user.is_authenticated%}
-                        <li>
-                            <a href="{{ url_for('auth.logout') }}" class="logout-link">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Sair</span>
-                    </a>
-                </li>
-                {% else %}
-                <li>
-                    <a href="{{ url_for('auth.login') }}">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Entrar</span>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-    </aside>
-    {%endblock%}
+        <div class="nav flex-column mt-3">
+            <a href="{{ url_for('core.home') }}" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span class="link-text">Início</span>
+            </a>
+
+            <a href="{{ url_for('content.index') }}" class="nav-link">
+                <i class="fas fa-book"></i>
+                <span class="link-text">Aulas</span>
+            </a>
+            
+            {% if current_user.is_authenticated and current_user.is_admin %}
+            <hr class="text-secondary mx-3">
+            <div class="px-3 mb-2 small text-muted link-text" style="font-size: 0.75rem;">ADMINISTRAÇÃO</div>
+            
+            <a href="{{ url_for('content.add_subject') }}" class="nav-link text-warning">
+                <i class="fas fa-plus-circle"></i>
+                <span class="link-text">Nova Matéria</span>
+            </a>
+            {% endif %}
+
+            <hr class="text-secondary mx-3">
+
+            <a href="{{ url_for('auth.logout') }}" class="nav-link text-danger-hover">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="link-text">Sair</span>
+            </a>
+        </div>
+    </nav>
 
     <main class="main-content">
         
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            <div class="flash-messages">
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                    <button class="alert__close">&times;</button>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-        {% endwith %}
-        
-        {% block content %}{% endblock %}
+        <div class="d-md-none bg-white p-3 shadow-sm mb-4 d-flex justify-content-between align-items-center rounded">
+            <span class="fw-bold">Plataforma</span>
+            <button class="btn btn-primary btn-sm" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+        </div>
 
-        <footer class="main-footer">
-            <div class="container">
-                <p>&copy; {{ now.year }} Study Platform</p>
-                {% if current_user.is_authenticated %}
-                <div class="subscription-status">
-                    {% if current_user.assinatura_valida_ate and current_user.assinatura_valida_ate > now %}
-                    <span class="badge badge-success">
-                        <i class="fas fa-check-circle"></i> Assinante
-                    </span>
-                    {% else %}
-                    <a href="{{ url_for('payments.index') }}" class="badge badge-warning">
-                        <i class="fas fa-exclamation-circle"></i> Assinar
-                    </a>
-                    {% endif %}
-                </div>
+        <div class="container-fluid">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
                 {% endif %}
-            </div>
-        </footer>
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const btnToggle = document.getElementById('btnToggle');
+
+        // 1. Verifica se o usuário já tinha deixado fechado antes
+        const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+        }
+
+        // 2. Função de alternar (Abrir/Fechar)
+        btnToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            
+            // Salva a preferência no navegador
+            const currentState = sidebar.classList.contains('collapsed');
+            localStorage.setItem('sidebar-collapsed', currentState);
+        });
+
+        // 3. Função para Mobile
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('mobile-show');
+        }
+    </script>
     
-    </main> <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
     {% block scripts %}{% endblock %}
-    
 </body>
 </html>

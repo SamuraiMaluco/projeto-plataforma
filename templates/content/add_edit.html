@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold text-primary">
+                        {% if type == 'subject' %} Nova Matéria
+                        {% elif type == 'module' %} Novo Módulo em: {{ parent.name }}
+                        {% elif type == 'lesson' %} Nova Aula em: {{ parent.title }}
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                        <div class="mb-3">
+                            <label class="form-label">Título / Nome</label>
+                            <input type="text" name="{% if type == 'subject' %}name{% else %}title{% endif %}" class="form-control" required>
+                        </div>
+
+                        {% if type == 'lesson' %}
+                        <div class="mb-3">
+                            <label class="form-label">Link do Vídeo (YouTube)</label>
+                            <input type="text" name="video_url" class="form-control" placeholder="https://youtube.com/...">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Duração (minutos)</label>
+                                <input type="number" name="duration" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3 d-flex align-items-center">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="is_free" id="freeCheck">
+                                    <label class="form-check-label" for="freeCheck">Aula Gratuita?</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Conteúdo Escrito</label>
+                            <textarea name="content_text" class="form-control" rows="5"></textarea>
+                        </div>
+                        {% endif %}
+
+                        {% if type != 'lesson' %}
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <textarea name="description" class="form-control" rows="3"></textarea>
+                        </div>
+                        {% endif %}
+
+                        {% if type == 'subject' %}
+                        <div class="mb-3">
+                            <label class="form-label">Ícone (FontAwesome)</label>
+                            <input type="text" name="icon" class="form-control" placeholder="ex: book, code, calculator" value="book">
+                            <div class="form-text">Nome do ícone sem o prefixo 'fa-'.</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                            <a href="{{ url_for('content.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

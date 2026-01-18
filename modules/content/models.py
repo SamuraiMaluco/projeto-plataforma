@@ -21,7 +21,9 @@ class Module(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     order = db.Column(db.Integer, default=0)
-    
+
+    description = db.Column(db.Text)
+
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
     
     # Relacionamento com as aulas
