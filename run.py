@@ -1,7 +1,10 @@
 from core import create_app
 from core.extensions import db
 from modules.auth.models import User
-# CORREÇÃO 1: Importamos Module em vez de Content
+
+from modules.payments.models import Payment
+from modules.exams.models import ExamAttempt
+
 from modules.content.models import Subject, Module, Lesson
 import click
 

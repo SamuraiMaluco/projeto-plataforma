@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4 bg-light" style="min-height: 90vh;">
+    <div class="row justify-content-center">
+        
+        <div class="col-lg-8">
+            <div class="card shadow border-0 mb-4">
+                <div class="card-header bg-white p-4">
+                    <span class="badge bg-primary mb-2">{{ lesson.module.subject.name }}</span>
+                    <h2 class="fw-bold mb-0">{{ lesson.title }}</h2>
+                </div>
+
+                {% if lesson.embed_video_url %}
+                <div class="ratio ratio-16x9 bg-black">
+                    <iframe src="{{ lesson.embed_video_url }}" allowfullscreen></iframe>
+                </div>
+                {% endif %}
+
+                {% if lesson.audio_file %}
+                <div class="p-3 bg-white border-top">
+                    <h6 class="text-muted"><i class="fas fa-headphones"></i> Áudio da Aula</h6>
+                    <audio controls class="w-100">
+                        <source src="{{ url_for('static', filename=lesson.audio_file) }}" type="audio/mpeg">
+                    </audio>
+                </div>
+                {% endif %}
+
+                <div class="card-body p-4">
+                    {% if lesson.content_text %}
+                        <div class="lesson-description">
+                            {{ lesson.content_text | safe }}
+                        </div>
+                    {% endif %}
+                    
+                    {% if lesson.pdf_file %}
+                    <hr>
+                    <a href="{{ url_for('static', filename=lesson.pdf_file) }}" target="_blank" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf"></i> Baixar Material de Apoio
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mb-5">
+                {% if previous_lesson %}
+                <a href="{{ url_for('content.lesson_detail', lesson_id=previous_lesson.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Anterior
+                </a>
+                {% else %}
+                <button class="btn btn-outline-secondary" disabled>Anterior</button>
+                {% endif %}
+
+                <a href="{{ url_for('content.subject_detail', slug=lesson.module.subject.slug) }}" class="btn btn-secondary">
+                    Voltar ao Módulo
+                </a>
+
+                {% if next_lesson %}
+                <a href="{{ url_for('content.lesson_detail', lesson_id=next_lesson.id) }}" class="btn btn-primary">
+                    Próxima <i class="fas fa-arrow-right"></i>
+                </a>
+                {% else %}
+                <button class="btn btn-outline-primary" disabled>Próxima</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

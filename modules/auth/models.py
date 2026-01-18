@@ -13,14 +13,15 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False)
-
-    # Relações com outros módulos
-    exam_attempts = db.relationship('ExamAttempt', back_populates='user', lazy='dynamic')
+    
+    #relacionamentos com outros módulos
     payments = db.relationship('Payment', back_populates='user', lazy='dynamic')
+
     lesson_progress = db.relationship('LessonProgress', back_populates='user', lazy='dynamic')
     subject_progress = db.relationship('SubjectProgress', back_populates='user', lazy='dynamic')
-    assinatura_valida_ate = db.Column(db.DateTime, nullable=True)
     
+    assinatura_valida_ate = db.Column(db.DateTime, nullable=True)
+    exam_attempts = db.relationship('ExamAttempt', back_populates='user', lazy='dynamic')
     #outros modulos relacionados
     exam_attempts = db.relationship('ExamAttempt', back_populates='user', lazy='dynamic')
     

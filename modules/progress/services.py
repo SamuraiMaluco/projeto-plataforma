@@ -3,7 +3,30 @@ from modules.content.models import LessonProgress, SubjectProgress, Module, Less
 from flask_login import current_user
 
 class ProgressService:
-    
+
+    @staticmethod
+    def get_user_progress_summary(user_id):
+        #retorna o progresso geral do usuário em todos os módulos
+
+        total_lessons = Lesson.query.count()
+
+        completed_lessons = LessonProgress.query.filter_by(
+            user_id=user_id,
+            completed=True
+        ).count()
+
+        #calculo de porcentagem
+        if total_lessons > 0:
+            percentage = int((completed_lessons / total_lessons) * 100)
+        else:
+            percentage = 0
+
+        return {
+            "total_lessons": total_lessons,
+            "completed_lessons": completed_lessons,
+            "percentage": int((completed_lessons / total_lessons * 100)) if total_lessons > 0 else 0
+        }
+
     @staticmethod
     def get_module_progress(user_id, module_id):
         """Calcula a porcentagem de conclusão de um Módulo (antigo Content)"""

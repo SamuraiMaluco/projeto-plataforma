@@ -1,4 +1,5 @@
 from core.extensions import db
+import re
 
 class Subject(db.Model):
     __tablename__ = 'subjects'
@@ -32,6 +33,8 @@ class Lesson(db.Model):
     title = db.Column(db.String(150), nullable=False)
     order = db.Column(db.Integer, default=0)
     is_free = db.Column(db.Boolean, default=False) # Se é aula grátis ou paga
+
+
     
     # --- ESTRUTURA HÍBRIDA (VÍDEO + ÁUDIO + PDF + TEXTO) ---
     # Agora temos campos separados para cada tipo de mídia
@@ -56,6 +59,24 @@ class Lesson(db.Model):
     # Mantendo progresso
     user_progress = db.relationship('LessonProgress', back_populates='lesson', lazy='dynamic')
 
+    @property
+    def embed_video_url(self):
+        #transforma o link do video em embed
+        if not self.video_url:
+            return None
+
+        # Regex poderosa para achar o ID do vídeo (funciona com youtu.be, watch?v=, embed/, etc)
+        # Fonte: https://stackoverflow.com/questions/34833232/get-youtube-video-id-from-url-with-python-and-regex
+        regex = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})'
+        match = re.search(regex, self.video_url)
+
+        if match:
+            video_id = match.group(1)
+            # Retorna o link de embed com parâmetros para ficar mais limpo (sem vídeos relacionados de outros canais)
+            return f"https://www.youtube.com/embed/{video_id}?rel=0&modestbranding=1"
+        
+        return self.video_url # Se não achar ID, retorna o link original (fallback)
+
 # --- CLASSES DE PROGRESSO (Mantenha se já existiam no seu projeto) ---
 class SubjectProgress(db.Model):
     __tablename__ = 'subject_progress'
@@ -64,6 +85,7 @@ class SubjectProgress(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'))
     progress_percent = db.Column(db.Float, default=0.0)
     subject = db.relationship('Subject', back_populates='user_progress')
+    user = db.relationship('User', back_populates='subject_progress')
 
 class LessonProgress(db.Model):
     __tablename__ = 'lesson_progress'
@@ -72,4 +94,7 @@ class LessonProgress(db.Model):
     lesson_id = db.Column(db.Integer, db.ForeignKey('lessons.id'))
     completed = db.Column(db.Boolean, default=False)
     updated_at = db.Column(db.DateTime, default=db.func.now())
+
     lesson = db.relationship('Lesson', back_populates='user_progress')
+
+    user = db.relationship('User', back_populates='lesson_progress')

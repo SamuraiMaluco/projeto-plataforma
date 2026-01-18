@@ -1,209 +1,117 @@
-/* Listagem de Aulas */
-.lessons-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+/* --- CONFIGURAÇÕES GERAIS --- */
+:root {
+    --primary-color: #0d6efd; /* Ajuste para a cor do seu site */
+    --hover-bg: #f8f9fa;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --card-hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
 
-.lesson-card {
-    border-radius: var(--border-radius);
+/* --- CARDS DAS MATÉRIAS (index.html) --- */
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    background: white;
     overflow: hidden;
-    transition: transform 0.3s ease;
 }
 
-.lesson-card:hover {
+.hover-card:hover {
     transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow) !important;
 }
 
-.lesson-card__media {
-    position: relative;
-    background: var(--color-light);
-}
-
-.lesson-card__media i {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2.5rem;
-    color: white;
-}
-
-/* Página de Detalhe */
-.lesson-player {
-    background: #000;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    margin-bottom: 2rem;
-}
-
-.lesson-player video, 
-.lesson-player audio {
-    width: 100%;
-    display: block;
-}
-
-.mark-as-completed.completed {
-    background: var(--color-success);
-}
-
-/*conainer principal da aula */
-.lesson-detail-container {
-    max-width: 1000px;
+.icon-box {
+    width: 80px;
+    height: 80px;
     margin: 0 auto;
-    padding: 30px 20px;
-}
-
-/*navegação no topo da aula */
-.lesson-breadcrumb {
-    font-size: 0.95rem;
-    margin-bottom: 20px;
-    color: var(--color-text-claro);
-}
-
-.lesson-breadcrumb a {
-    color: var(--cor-primaria);
-    text-decoration: none;
-    font-weight: 600;
-}
-.lesson-breadcrumb a:hover {
-    text-decoration: underline;
-}
-
-/*área do player de vídeo*/
-.lesson-player {
-    width: 100%;
-    background-color: #000; /* Fundo preto para cinema */
-    border-radius: var(--borda-radius);
-    overflow: hidden;
-    box-shadow: var(--sombra);
-    margin-bottom: 30px;
-    /* Mantém a proporção 16:9 sempre */
-    aspect-ratio: 16 / 9;
-    position: relative;
-}
-
-.lesson-player video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Garante que o vídeo todo apareça */
-}
-
-/* Área de Texto/Descrição */
-.lesson-text {
-    background-color: var(--cor-fundo-card);
-    padding: 30px;
-    border-radius: var(--borda-radius);
-    border: 1px solid var(--cor-borda);
-    box-shadow: var(--sombra-card);
-    margin-bottom: 30px;
-}
-
-.lesson-text h1 {
-    color: var(--cor-texto);
-    font-size: 2rem;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--cor-borda);
-    padding-bottom: 10px;
-}
-
-.lesson-text p {
-    color: var(--cor-texto);
-    line-height: 1.6;
-    margin-bottom: 15px;
-    font-size: 1.05rem;
-}
-
-/* Barra de Ações (Botões) */
-.lesson-actions {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    background-color: var(--cor-fundo-card);
-    padding: 20px;
-    border-radius: var(--borda-radius);
-    border: 1px solid var(--cor-borda);
+    justify-content: center;
+    background-color: rgba(13, 110, 253, 0.1); /* Fundo azulzinho suave */
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
 }
 
-/* Botão de Concluir */
-.mark-as-completed {
-    background-color: var(--cor-primaria);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 25px;
-    font-size: 1rem;
+.hover-card:hover .icon-box {
+    background-color: var(--primary-color);
+    color: white !important;
+}
+
+.hover-card:hover .icon-box i {
+    color: white; /* Garante que o ícone fique branco no hover */
+}
+
+/* Link estendido para clicar no card todo */
+.stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+}
+
+/* --- LISTA DE MÓDULOS (subject.html) --- */
+.accordion-button:not(.collapsed) {
+    background-color: rgba(13, 110, 253, 0.05);
+    color: var(--primary-color);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    transition: background-color 0.2s;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.3s ease;
 }
 
-.mark-as-completed:hover {
-    background-color: var(--cor-primaria-dark);
+/* --- PLAYER DA AULA (player.html) --- */
+.lesson-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #4a5568;
 }
 
-.mark-as-completed.completed {
-    background-color: var(--cor-sucesso); /* Verde quando concluído */
-    cursor: default;
+.lesson-description h1, 
+.lesson-description h2, 
+.lesson-description h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: #2d3748;
 }
 
-.mark-as-completed:disabled {
-    opacity: 0.7;
+.lesson-description p {
+    margin-bottom: 1rem;
+}
+
+/* Ajuste fino para o player de vídeo */
+.ratio-16x9 {
+    border-radius: 0; /* Remove borda arredondada se quiser full width */
+    background-color: #000;
+}
+
+/* Player de áudio personalizado */
+audio {
+    height: 40px;
+    outline: none;
+}
+
+/* Botões de navegação */
+.btn-outline-primary:disabled,
+.btn-outline-secondary:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
-}
-
-/* Botões de Navegação (Anterior/Próxima) */
-.lesson-navigation {
-    display: flex;
-    gap: 15px;
-}
-
-.lesson-navigation .btn {
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-outline-secondary {
-    border: 1px solid var(--cor-primaria);
-    color: var(--cor-primaria);
-}
-
-.btn-outline-secondary:hover {
-    background-color: var(--cor-primaria);
-    color: white;
-}
-
-.btn-primary {
-    background-color: var(--cor-primaria);
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: var(--cor-primaria-dark);
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .lesson-actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .lesson-navigation {
-        justify-content: space-between;
-    }
-    
-    .lesson-text h1 {
-        font-size: 1.5rem;
-    }
 }
