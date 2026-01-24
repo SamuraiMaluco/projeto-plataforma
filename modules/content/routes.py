@@ -23,6 +23,7 @@ def index():
 def subject_detail(slug):
     """Mostra detalhes da matéria e seus módulos."""
     subject = Subject.query.filter_by(slug=slug).first_or_404()
+    # Ordena módulos por ordem (se existir campo order) ou id
     modules = Module.query.filter_by(subject_id=subject.id).order_by(Module.order).all()
     return render_template('content/subject.html', subject=subject, modules=modules)
 
@@ -32,19 +33,31 @@ def lesson_detail(lesson_id):
     """Player da aula."""
     lesson = Lesson.query.get_or_404(lesson_id)
     
-    # Verifica assinatura
-    assinatura_ativa = current_user.assinatura_valida_ate and current_user.assinatura_valida_ate > datetime.utcnow()
-    if not lesson.is_free and not assinatura_ativa:
-        flash('Esta aula é exclusiva para assinantes.', 'warning')
-        return redirect(url_for('payments.index'))
+    # --- LÓGICA DE ACESSO (CORREÇÃO 1 e 2) ---
+    
+    # 1. Se for Admin, libera tudo imediatamente
+    if current_user.is_admin:
+        pass # Acesso permitido
+        
+    # 2. Se a aula NÃO for grátis, verifica assinatura
+    elif not lesson.is_free:
+        assinatura_ativa = False
+        if current_user.assinatura_valida_ate:
+            if current_user.assinatura_valida_ate > datetime.utcnow():
+                assinatura_ativa = True
+        
+        if not assinatura_ativa:
+            flash('Esta aula é exclusiva para assinantes Premium.', 'warning')
+            # Redireciona para a página de vendas/pagamentos
+            return redirect(url_for('payments.index'))
 
-    # Verifica progresso
+    # 3. Registra/Busca progresso
     progress = LessonProgress.query.filter_by(
         user_id=current_user.id, 
         lesson_id=lesson.id
     ).first()
     
-    # Navegação (Anterior / Próxima)
+    # Navegação (Anterior / Próxima) dentro do mesmo módulo
     all_lessons = Lesson.query.filter_by(module_id=lesson.module_id).order_by(Lesson.order).all()
     prev_lesson = None
     next_lesson = None
@@ -74,8 +87,8 @@ def add_subject():
         description = request.form.get('description')
         icon = request.form.get('icon', 'book')
         
-        # Cria slug automático
-        slug = name.lower().replace(' ', '-')
+        # Cria slug simples
+        slug = name.lower().strip().replace(' ', '-')
         
         new_subject = Subject(name=name, description=description, icon=icon, slug=slug)
         db.session.add(new_subject)
@@ -94,7 +107,7 @@ def add_module(subject_id):
     
     if request.method == 'POST':
         title = request.form.get('title')
-        description = request.form.get('description')
+        description = request.form.get('description') # Certifique-se que o BD tem essa coluna
         
         new_module = Module(title=title, description=description, subject_id=subject.id)
         db.session.add(new_module)
@@ -116,7 +129,12 @@ def add_lesson(module_id):
         video_url = request.form.get('video_url')
         content_text = request.form.get('content_text')
         duration = request.form.get('duration')
-        is_free = request.form.get('is_free') == 'on'
+        
+        # --- CORREÇÃO 3: Lógica do Checkbox "Aula Gratuita" ---
+        # HTML Checkbox envia 'on' se marcado, None se desmarcado.
+        # Se is_free vier 'on', é Grátis. Se não vier, é Premium.
+        is_free_checkbox = request.form.get('is_free')
+        is_free = True if is_free_checkbox == 'on' else False
         
         new_lesson = Lesson(
             title=title, 
@@ -129,6 +147,8 @@ def add_lesson(module_id):
         db.session.add(new_lesson)
         db.session.commit()
         flash('Aula adicionada com sucesso!', 'success')
+        
+        # Redireciona usando o slug da matéria pai do módulo
         return redirect(url_for('content.subject_detail', slug=module.subject.slug))
 
     return render_template('content/add_edit.html', type='lesson', parent=module)
@@ -139,13 +159,14 @@ def add_lesson(module_id):
 def delete_lesson(lesson_id):
     """Deleta uma aula."""
     lesson = Lesson.query.get_or_404(lesson_id)
-    # Remove progressos antes de deletar
-    LessonProgress.query.filter_by(lesson_id=lesson.id).delete()
+    slug = lesson.module.subject.slug # Guarda o slug antes de deletar
     
+    LessonProgress.query.filter_by(lesson_id=lesson.id).delete()
     db.session.delete(lesson)
     db.session.commit()
-    flash('Aula removida com sucesso.', 'success')
-    return redirect(url_for('content.index'))
+    
+    flash('Aula removida.', 'success')
+    return redirect(url_for('content.subject_detail', slug=slug))
 
 def init_content_routes(app):
     app.register_blueprint(bp)

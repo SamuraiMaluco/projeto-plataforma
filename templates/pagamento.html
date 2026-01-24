@@ -12,24 +12,24 @@
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-header bg-light text-center py-4">
-                    <h4 class="my-0 font-weight-normal">Mensal</h4>
-                </div>
-                <div class="card-body text-center d-flex flex-column">
-                    <h1 class="card-title pricing-card-title">R$ 39<small class="text-muted">,90</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4 flex-grow-1">
-                        <li>Acesso total por 30 dias</li>
-                        <li>Cancele quando quiser</li>
-                        <li>Suporte básico</li>
-                    </ul>
-                    <a href="{{ url_for('payments.criar_preferencia', plano='mensal') }}" class="btn btn-lg btn-block btn-outline-primary mt-auto">
-                        Assinar Mensal
-                    </a>
-                </div>
-            </div>
+     <div class="col-md-4">
+    <div class="card mb-4 shadow-sm border-primary">
+        <div class="card-header py-3 text-white bg-primary border-primary">
+            <h4 class="my-0 fw-normal">Anual Parcelado</h4>
         </div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title">R$ 29,15<small class="text-muted">/mês</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+                <li>Acesso por 12 meses</li>
+                <li>Pague em até 12x</li>
+                <li>Conteúdo completo</li>
+            </ul>
+            <a href="{{ url_for('payments.criar_preferencia', plano='anual_parcelado') }}" class="w-100 btn btn-lg btn-primary">
+                Assinar Parcelado
+            </a>
+        </div>
+    </div>
+</div>
 
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow border-primary">
